@@ -2,17 +2,8 @@
 # Env that must be present when tmux servers, background daemons, or any
 # other non-interactive shells start belongs here, not in ~/.zshrc.
 
-
-# Hindsight dev-workspace memory bearer (bank: borrrk-infra).
-# The 43-char base64url token lives ONLY in the 0600 file below, written by
-# `install.sh` from secrets/hindsight-dev-workspace.token.age (manifest `decrypt` row).
-# NEVER inline the token here (this file is world-readable).
-if [ -s "$HOME/.hindsight/secrets/hindsight-dev-workspace.token" ]; then
-  export HINDSIGHT_API_TOKEN_DEV_WORKSPACE="$(< "$HOME/.hindsight/secrets/hindsight-dev-workspace.token")"
-  export HINDSIGHT_API_TOKEN="$HINDSIGHT_API_TOKEN_DEV_WORKSPACE"
-fi
-
-# Native pi-hindsight connection settings (the bearer remains in the file above).
+# Hindsight dev-workspace memory (bank: borrrk-infra). The bearer variables come from
+# secrets/session.env, loaded below.
 export HINDSIGHT_BASE_URL="https://hindsight-api.p0g.ca"
 export HINDSIGHT_API_KEY_REF="HINDSIGHT_API_TOKEN"
 export PI_HINDSIGHT_PROJECT_BANK_ID="dev-workspace-pi-coding"

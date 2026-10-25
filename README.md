@@ -15,7 +15,7 @@ the user-level files that live in the homes.
 | `AGENTS.md` | Agent instructions for working in this repository (not installed) |
 | `agents/AGENTS.md` | Global working agreements; linked to `~/.agents/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` |
 | `agents/RULES.md` | OMP sticky rules (always applied, also inside task subagents, which do not receive `AGENTS.md`); linked to `~/.omp/agent/RULES.md` |
-| `agents/skills/<name>/` | The 3 harness skills; linked as `~/.agents/skills` and `~/.claude/skills`, and per-skill into `~/.codex/skills/<name>` |
+| `agents/skills/<name>/` | The 2 harness skills; linked as `~/.agents/skills` and `~/.claude/skills`, and per-skill into `~/.codex/skills/<name>` |
 | `omp/` | OMP user config (`config.yml`, `models.yml`, `mcp.json`, `lsp.yaml`, `SYSTEM_TEMPLATE.md`) |
 | `omp/prompts/` | `SYSTEM_TEMPLATE.md` builder, vendored upstream prompts and the post-upgrade `reconcile-omp.py` run by `omp-reconcile` / `omp update`. Never installed |
 | `omp/ROLES.md`, `omp/omo-model-criteria.md` | Documentation only — role catalogue and model-selection criteria. Never installed |

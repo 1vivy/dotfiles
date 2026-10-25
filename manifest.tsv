@@ -8,11 +8,9 @@ link	agents/AGENTS.md	~/.codex/AGENTS.md	all
 link	agents/RULES.md	~/.omp/agent/RULES.md	workstation,atlas-agent,mac
 link	agents/skills	~/.agents/skills	all
 link	agents/skills	~/.claude/skills	workstation,atlas-agent
-link	agents/skills/linux-game-stutter-triage	~/.codex/skills/linux-game-stutter-triage	all
 link	agents/skills/omp-wayland-pipewire-capture-repair	~/.codex/skills/omp-wayland-pipewire-capture-repair	all
 link	agents/skills/asd-ste100	~/.codex/skills/asd-ste100	all
 # macOS Claude Desktop syncs its own skills into ~/.claude/skills/synced, so link per skill there
-link	agents/skills/linux-game-stutter-triage	~/.claude/skills/linux-game-stutter-triage	mac
 link	agents/skills/omp-wayland-pipewire-capture-repair	~/.claude/skills/omp-wayland-pipewire-capture-repair	mac
 link	agents/skills/asd-ste100	~/.claude/skills/asd-ste100	mac
 link	omp/config.yml	~/.omp/agent/config.yml	workstation,atlas-agent,mac
@@ -20,7 +18,6 @@ link	omp/models.yml	~/.omp/agent/models.yml	workstation,atlas-agent,mac
 link	omp/mcp.json	~/.omp/agent/mcp.json	workstation,atlas-agent
 link	omp/lsp.yaml	~/.omp/agent/lsp.yaml	workstation,atlas-agent,mac
 link	omp/SYSTEM_TEMPLATE.md	~/.omp/agent/SYSTEM_TEMPLATE.md	workstation,atlas-agent,mac
-decrypt	secrets/hindsight-dev-workspace.token.age	~/.hindsight/secrets/hindsight-dev-workspace.token	workstation,atlas-agent,mac
 gpg	secrets/gpg-agent-signing.asc.age	~/.gnupg	workstation,atlas-agent,mac
 seed	paseo/config.json	~/.paseo/config.json	workstation
 link	shell/zshrc	~/.zshrc	all
