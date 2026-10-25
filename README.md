@@ -102,9 +102,16 @@ half is `secrets/recipients.txt`.
   `secrets/age-identity.bw-item`. It uses `$BW_SESSION` when that is already unlocked, otherwise it
   runs `bw login`/`bw unlock` on the terminal. The session lives only in that process. Hosts without
   `bw` (atlas-agent) take a copy of the identity: `install -m 600 age-identity.txt ~/.config/dotfiles/`.
-- **Add or change a secret:** `age -a -R secrets/recipients.txt -o secrets/<name>.age <live file>`, add a
+- **Environment secrets** go in `secrets/env.age` as `NAME=value` lines (shell syntax). `shell/zshenv`
+  decrypts it with the host's identity on the first shell after boot, or after the ciphertext
+  changes, into a per-user runtime file (`$XDG_RUNTIME_DIR` on Linux, the user temp dir on macOS)
+  and exports it to every shell. Logging in to the machine is the trust boundary; Bitwarden is only
+  touched once per new host, to fetch the identity. Edit with
+  `f=$(mktemp) && age -d -i ~/.config/dotfiles/age-identity.txt secrets/env.age > "$f" && $EDITOR "$f"
+  && age -a -R secrets/recipients.txt -o secrets/env.age "$f"; rm -f "$f"`.
+- **File secrets:** `age -a -R secrets/recipients.txt -o secrets/<name>.age <live file>`, add a
   `decrypt` row to `manifest.tsv`, commit. Edit by re-encrypting from the live file.
-- **Requires** `age` on every host that installs a `decrypt` row (`pacman -S age`, `brew install age`).
+- **Requires** `age` on every host (`pacman -S age`, `brew install age`).
 
 ## Node
 

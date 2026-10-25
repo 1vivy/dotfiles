@@ -21,7 +21,6 @@ link	omp/mcp.json	~/.omp/agent/mcp.json	workstation,atlas-agent
 link	omp/lsp.yaml	~/.omp/agent/lsp.yaml	workstation,atlas-agent,mac
 link	omp/SYSTEM_TEMPLATE.md	~/.omp/agent/SYSTEM_TEMPLATE.md	workstation,atlas-agent,mac
 decrypt	secrets/hindsight-dev-workspace.token.age	~/.hindsight/secrets/hindsight-dev-workspace.token	workstation,atlas-agent,mac
-decrypt	secrets/omniroute-agent-extension.config.json.age	~/.omp/agent/omniroute-agent-extension/config.json	workstation,atlas-agent,mac
 gpg	secrets/gpg-agent-signing.asc.age	~/.gnupg	workstation,atlas-agent,mac
 seed	paseo/config.json	~/.paseo/config.json	workstation
 link	shell/zshrc	~/.zshrc	all

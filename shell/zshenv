@@ -17,6 +17,26 @@ export HINDSIGHT_BASE_URL="https://hindsight-api.p0g.ca"
 export HINDSIGHT_API_KEY_REF="HINDSIGHT_API_TOKEN"
 export PI_HINDSIGHT_PROJECT_BANK_ID="dev-workspace-pi-coding"
 
+# Session secrets. secrets/env.age (NAME=value lines) is decrypted with this machine's age identity
+# into a per-user runtime file by the first shell after boot, or after the ciphertext changes, and
+# exported to every shell. Logging in to the machine is the trust boundary; no Bitwarden unlock.
+_df_src=${${:-$HOME/.zshenv}:A:h:h}/secrets/env.age
+_df_id=${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/age-identity.txt
+_df_env=${XDG_RUNTIME_DIR:-${${TMPDIR:-/tmp}%/}}/dotfiles-$UID.env
+_df_age=${commands[age]:-/opt/homebrew/bin/age}
+if [[ -r $_df_src && -r $_df_id && -x $_df_age ]]; then
+  if [[ ! -s $_df_env || $_df_env -ot $_df_src ]]; then
+    ( umask 077; $_df_age -d -i $_df_id -o $_df_env.$$ $_df_src 2>/dev/null && mv -f $_df_env.$$ $_df_env ) || rm -f $_df_env.$$
+  fi
+  [[ -s $_df_env ]] && { set -a; . $_df_env; set +a }
+fi
+unset _df_src _df_id _df_env _df_age
+
+# OmniRoute (the omni provider in OMP): endpoint and catalog autosync; the API key comes from
+# secrets/env.age as OMNIROUTE_API_KEY.
+export OMNIROUTE_URL="https://omniroute.p0g.ca"
+export OMNIROUTE_AUTO_SYNC_INTERVAL_MINUTES=60
+
 # GUI askpass. OpenSSH and sudo fall back to $SSH_ASKPASS / $SUDO_ASKPASS whenever
 # they have no controlling tty — agent tool calls, desktop launchers, systemd units.
 # Arch ships no binary at OpenSSH's compiled-in /usr/lib/ssh/ssh-askpass, so that
