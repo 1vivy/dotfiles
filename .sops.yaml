@@ -1,0 +1,5 @@
+# sops creation rules: secrets/*.env files are encrypted to the dotfiles age recipient
+# (secrets/recipients.txt). Edit with `sops edit secrets/session.env`.
+creation_rules:
+  - path_regex: secrets/.*\.env$
+    age: age1xt82pzqatkq494ak88ae2cn7aekkr7f8pcr44yvy06a5fklx9y6s863f6y

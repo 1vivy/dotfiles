@@ -25,7 +25,7 @@ the Claude 5x switch on Oct 8, then `@oracle`. `security-reviewer` → `@securit
 The `omni` provider comes from the `omniroute-agent-extension` plugin (`omp plugin install
 omniroute-agent-extension@3.2.3` per host). It takes `OMNIROUTE_URL`, `OMNIROUTE_API_KEY` and
 `OMNIROUTE_AUTO_SYNC_INTERVAL_MINUTES` from the session environment (`shell/zshenv`, the key from
-the dotfiles' `secrets/env.age`), so it needs no `config.json`. It syncs the `omni` models into
+the dotfiles' `secrets/session.env`), so it needs no `config.json`. It syncs the `omni` models into
 `~/.omp/agent/models.json` on session start and writes the key into that file's provider entry.
 
 Agents: OMP's bundled set only. On 2026-10-24 a preflight error for an unknown agent listed `scout`, `reviewer`,

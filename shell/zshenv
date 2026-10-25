@@ -17,23 +17,28 @@ export HINDSIGHT_BASE_URL="https://hindsight-api.p0g.ca"
 export HINDSIGHT_API_KEY_REF="HINDSIGHT_API_TOKEN"
 export PI_HINDSIGHT_PROJECT_BANK_ID="dev-workspace-pi-coding"
 
-# Session secrets. secrets/env.age (NAME=value lines) is decrypted with this machine's age identity
-# into a per-user runtime file by the first shell after boot, or after the ciphertext changes, and
-# exported to every shell. Logging in to the machine is the trust boundary; no Bitwarden unlock.
-_df_src=${${:-$HOME/.zshenv}:A:h:h}/secrets/env.age
-_df_id=${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/age-identity.txt
+# Session secrets. secrets/session.env (sops dotenv, edit with `sops edit secrets/session.env`) is
+# decrypted with this machine's age identity into a per-user runtime file by the first shell after
+# boot, or after the file changes, and exported to every shell. Logging in to the machine is the
+# trust boundary; no Bitwarden unlock.
+export SOPS_AGE_KEY_FILE=${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/age-identity.txt
+_df_src=${${:-$HOME/.zshenv}:A:h:h}/secrets/session.env
 _df_env=${XDG_RUNTIME_DIR:-${${TMPDIR:-/tmp}%/}}/dotfiles-$UID.env
-_df_age=${commands[age]:-/opt/homebrew/bin/age}
-if [[ -r $_df_src && -r $_df_id && -x $_df_age ]]; then
+_df_sops=${commands[sops]:-/opt/homebrew/bin/sops}
+if [[ -r $_df_src && -r $SOPS_AGE_KEY_FILE && -x $_df_sops ]]; then
   if [[ ! -s $_df_env || $_df_env -ot $_df_src ]]; then
-    ( umask 077; $_df_age -d -i $_df_id -o $_df_env.$$ $_df_src 2>/dev/null && mv -f $_df_env.$$ $_df_env ) || rm -f $_df_env.$$
+    ( umask 077; $_df_sops decrypt --output $_df_env.$$ $_df_src 2>/dev/null && mv -f $_df_env.$$ $_df_env ) || rm -f $_df_env.$$
   fi
-  [[ -s $_df_env ]] && { set -a; . $_df_env; set +a }
+  if [[ -s $_df_env ]]; then
+    while IFS= read -r _df_line; do
+      [[ $_df_line == [A-Za-z_]*=* ]] && export "$_df_line"
+    done < $_df_env
+  fi
 fi
-unset _df_src _df_id _df_env _df_age
+unset _df_src _df_env _df_sops _df_line
 
 # OmniRoute (the omni provider in OMP): endpoint and catalog autosync; the API key comes from
-# secrets/env.age as OMNIROUTE_API_KEY.
+# secrets/session.env as OMNIROUTE_API_KEY.
 export OMNIROUTE_URL="https://omniroute.p0g.ca"
 export OMNIROUTE_AUTO_SYNC_INTERVAL_MINUTES=60
 

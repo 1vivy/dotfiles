@@ -24,7 +24,7 @@ the user-level files that live in the homes.
 | `xerahs/` | XerahS launcher (capture actions bound by KDE shortcuts) and its `app-xerahs.service` tray unit; workstation only. Uploader configs hold the Zipline token and are never committed |
 | `manifest.tsv` | The install manifest: `mode, repo_path, target, profiles` |
 | `install.sh` | Adopter |
-| `secrets/` | age ciphertext (`*.age`), the public `recipients.txt`, and `age-identity.bw-item` (the Bitwarden item ID holding the private identity) |
+| `secrets/`, `.sops.yaml` | age ciphertext (`*.age`), the sops dotenv `session.env` for session environment secrets, the public `recipients.txt`, and `age-identity.bw-item` (the Bitwarden item ID holding the private identity); `.sops.yaml` holds the sops creation rule |
 | `hooks/pre-commit` | gitleaks secret scan; installed via `core.hooksPath` |
 
 ## link, seed, decrypt, gpg
@@ -102,16 +102,17 @@ half is `secrets/recipients.txt`.
   `secrets/age-identity.bw-item`. It uses `$BW_SESSION` when that is already unlocked, otherwise it
   runs `bw login`/`bw unlock` on the terminal. The session lives only in that process. Hosts without
   `bw` (atlas-agent) take a copy of the identity: `install -m 600 age-identity.txt ~/.config/dotfiles/`.
-- **Environment secrets** go in `secrets/env.age` as `NAME=value` lines (shell syntax). `shell/zshenv`
-  decrypts it with the host's identity on the first shell after boot, or after the ciphertext
-  changes, into a per-user runtime file (`$XDG_RUNTIME_DIR` on Linux, the user temp dir on macOS)
-  and exports it to every shell. Logging in to the machine is the trust boundary; Bitwarden is only
-  touched once per new host, to fetch the identity. Edit with
-  `f=$(mktemp) && age -d -i ~/.config/dotfiles/age-identity.txt secrets/env.age > "$f" && $EDITOR "$f"
-  && age -a -R secrets/recipients.txt -o secrets/env.age "$f"; rm -f "$f"`.
+- **Environment secrets** live in `secrets/session.env`, a sops dotenv file: names are readable,
+  values are encrypted to the recipient in `.sops.yaml`. Edit with `sops edit secrets/session.env`
+  (`zshenv` exports `SOPS_AGE_KEY_FILE`); sops opens the decrypted file in `$EDITOR` and re-encrypts
+  on save. `shell/zshenv` decrypts it with the host's identity on the first shell after boot, or after
+  the file changes, into a per-user runtime file (`$XDG_RUNTIME_DIR` on Linux, the user temp dir on
+  macOS) and exports it to every shell. Logging in to the machine is the trust boundary; Bitwarden is
+  only touched once per new host, to fetch the identity.
 - **File secrets:** `age -a -R secrets/recipients.txt -o secrets/<name>.age <live file>`, add a
   `decrypt` row to `manifest.tsv`, commit. Edit by re-encrypting from the live file.
-- **Requires** `age` on every host (`pacman -S age`, `brew install age`).
+- **Requires** `age` and `sops` on every host (`pacman -S age sops`, `brew install age sops`; NixOS
+  via the borrrk-infra workstation module).
 
 ## Node
 

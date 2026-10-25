@@ -10,14 +10,14 @@ The repository is public. Everything committed is published.
 
 - Secret values live in `secrets/*.age`, encrypted to `secrets/recipients.txt`, in the 0600 files
   `install.sh` writes from them, and in the session environment `shell/zshenv` loads from
-  `secrets/env.age`.
+  `secrets/session.env` (sops dotenv).
 - Values move file to file: encrypt from the live file
   (`age -a -R secrets/recipients.txt -o secrets/<name>.age <live file>`), decrypt into a pipe or a
   0600 file. Model context and tool arguments carry names, paths and hashes only.
 - Verify a secret by round trip (`age -d -i ~/.config/dotfiles/age-identity.txt <file> | cmp -
   <live file>`) or by hash prefix. Check an environment secret's presence with `[[ -n $NAME ]]` or a
   hash of its value.
-- New environment secret: add a `NAME=value` line to `secrets/env.age` (edit recipe in `README.md`).
+- New environment secret: `sops edit secrets/session.env` and add a `NAME=value` line.
   New file secret: add the `.age` file and a `decrypt` (or `gpg`) row in `manifest.tsv`, run
   `./install.sh --profile <profile>`, then `--check`.
 - The age identity comes from the Bitwarden item in `secrets/age-identity.bw-item` through
