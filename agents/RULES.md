@@ -1,0 +1,3 @@
+- Commits sign with the agent key; the owner key `616B6A6050DF1E4B` stays with the owner.
+- Device writes run through the Bash tool, which carries the destructive-operation approvals.
+- Look at a target before deleting or overwriting it.

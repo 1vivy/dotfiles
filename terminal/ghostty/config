@@ -1,0 +1,19 @@
+# Powerlevel10k glyphs are rendered by the client, including over SSH.
+font-family = MesloLGS NF
+font-size = 12
+
+# Install remote terminfo when possible; use a compatible TERM if it fails.
+shell-integration = detect
+shell-integration-features = ssh-env,ssh-terminfo
+
+# background translucency so the compositor blur is visible
+background-opacity = 0.85
+background-blur = true
+
+# keep long omp transcripts (wide tables, long URLs) from being pruned
+scrollback-limit = 100000000
+window-padding-balance = true
+
+# omp - kitty keyboard
+keybind = alt+backspace=text:\x1b\x7f
+keybind = shift+enter=text:\n

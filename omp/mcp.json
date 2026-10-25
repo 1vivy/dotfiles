@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "bitwarden": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@bitwarden/mcp-server@2026.7.0"],
+      "env": {
+        "BW_SESSION": "${BW_SESSION}",
+        "DISPLAY": "${DISPLAY}",
+        "WAYLAND_DISPLAY": "${WAYLAND_DISPLAY}",
+        "XDG_RUNTIME_DIR": "${XDG_RUNTIME_DIR}"
+      },
+      "enabled": true,
+      "lifecycle": "keep-alive",
+      "startupTimeoutMs": 60000,
+      "requestTimeoutMs": 180000,
+      "includeTools": ["status", "unlock", "lock", "sync", "get", "generate"]
+    },
+    "ghidra": {
+      "type": "stdio",
+      "command": "/home/vivy/.local/bin/ghidra-mcp-bridge",
+      "args": ["--lazy", "--default-groups", "listing"],
+      "env": {
+        "GHIDRA_MCP_URL": "http://127.0.0.1:8089",
+        "GHIDRA_MCP_REQUIRE_PROGRAM_SELECTORS": "1",
+        "GHIDRA_MCP_FILE_ROOT": "/home/vivy/Ghidra"
+      },
+      "enabled": true,
+      "lifecycle": "keep-alive",
+      "startupTimeoutMs": 60000,
+      "requestTimeoutMs": 120000
+    }
+  }
+}

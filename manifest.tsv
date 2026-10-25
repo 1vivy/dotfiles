@@ -1,0 +1,47 @@
+# mode	repo_path	target	profiles
+# profiles: comma-separated workstation|atlas-agent|mac, or 'all'
+# mode: link = symlink target -> repo (backing up a differing real file first)
+#       seed = copy into place only when the target is missing
+link	agents/AGENTS.md	~/.agents/AGENTS.md	all
+link	agents/AGENTS.md	~/.claude/CLAUDE.md	all
+link	agents/AGENTS.md	~/.codex/AGENTS.md	all
+link	agents/RULES.md	~/.omp/agent/RULES.md	workstation,atlas-agent,mac
+link	agents/skills	~/.agents/skills	all
+link	agents/skills	~/.claude/skills	workstation,atlas-agent
+link	agents/skills/linux-game-stutter-triage	~/.codex/skills/linux-game-stutter-triage	all
+link	agents/skills/omp-wayland-pipewire-capture-repair	~/.codex/skills/omp-wayland-pipewire-capture-repair	all
+link	agents/skills/asd-ste100	~/.codex/skills/asd-ste100	all
+# macOS Claude Desktop syncs its own skills into ~/.claude/skills/synced, so link per skill there
+link	agents/skills/linux-game-stutter-triage	~/.claude/skills/linux-game-stutter-triage	mac
+link	agents/skills/omp-wayland-pipewire-capture-repair	~/.claude/skills/omp-wayland-pipewire-capture-repair	mac
+link	agents/skills/asd-ste100	~/.claude/skills/asd-ste100	mac
+link	omp/config.yml	~/.omp/agent/config.yml	workstation,atlas-agent,mac
+link	omp/models.yml	~/.omp/agent/models.yml	workstation,atlas-agent,mac
+link	omp/mcp.json	~/.omp/agent/mcp.json	workstation,atlas-agent
+link	omp/lsp.yaml	~/.omp/agent/lsp.yaml	workstation,atlas-agent,mac
+link	omp/SYSTEM_TEMPLATE.md	~/.omp/agent/SYSTEM_TEMPLATE.md	workstation,atlas-agent,mac
+decrypt	secrets/hindsight-dev-workspace.token.age	~/.hindsight/secrets/hindsight-dev-workspace.token	workstation,atlas-agent,mac
+decrypt	secrets/omniroute-agent-extension.config.json.age	~/.omp/agent/omniroute-agent-extension/config.json	workstation,atlas-agent,mac
+gpg	secrets/gpg-agent-signing.asc.age	~/.gnupg	workstation,atlas-agent,mac
+seed	paseo/config.json	~/.paseo/config.json	workstation
+link	shell/zshrc	~/.zshrc	all
+link	shell/zshenv	~/.zshenv	all
+link	shell/p10k.zsh	~/.p10k.zsh	all
+link	shell/profile	~/.profile	all
+link	shell/environment.d/editor.conf	~/.config/environment.d/editor.conf	workstation
+link	git/gitconfig	~/.gitconfig	all
+link	tools/eget.toml	~/.eget.toml	all
+link	tools/npmrc	~/.npmrc	all
+link	tools/zipline	~/.local/bin/zipline	workstation
+# XerahS (screenshots/uploads): launcher with the capture actions KDE shortcuts call, and its tray unit
+link	xerahs/xerahs.desktop	~/.local/share/applications/xerahs.desktop	workstation
+link	xerahs/app-xerahs.service	~/.config/systemd/user/app-xerahs.service	workstation
+# macOS: same workflows bound in-app to Cmd-Shift-3/4/5/6 (XerahS copies WorkflowsConfig.json to its
+# machine-specific name on first run), plus a placeholder p0g uploader (replace the token in XerahS, never commit it)
+seed	xerahs/mac-WorkflowsConfig.json	~/Documents/XerahS/Settings/WorkflowsConfig.json	mac
+seed	xerahs/p0g.sxcu	~/Documents/XerahS/Plugins/p0g.sxcu	mac
+decrypt	secrets/ssh-fleet.conf.age	~/.ssh/config.d/borrrk	workstation,atlas-agent
+link	terminal/tmux.conf	~/.tmux.conf	all
+link	terminal/wezterm.lua	~/.wezterm.lua	workstation,mac
+link	terminal/ghostty/config	~/.config/ghostty/config	workstation,mac
+link	terminal/ghostty/config.ghostty	~/.config/ghostty/config.ghostty	workstation,mac

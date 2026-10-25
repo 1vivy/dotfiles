@@ -1,0 +1,31 @@
+# LSP overrides. Seeded 2026-08-20.
+#
+# This file only contributes overrides; OMP merges them onto all 53 built-in
+# servers in defaults.json and then keeps the ones whose root markers match the
+# cwd, whose binary resolves, and whose merged config is not disabled. So
+# everything installed on PATH still auto-detects — nothing needs enumerating.
+servers:
+  # The JVM pair is disabled globally. ~/Projects holds 583,677 .java and
+  # 270,744 .kt files across AOSP trees (ROMs 1.75M files,
+  # TEESimulator-RS-rka-worktree 578k, infiniti-camera-port 300k). jdtls and
+  # kotlin-lsp index eagerly and will pin CPU for hours or OOM on those.
+  # Re-enable per project with a <repo>/.omp/lsp.yaml override when the tree is
+  # small enough to be worth it (e.g. TEESimulator at 35k files).
+  jdtls:
+    disabled: true
+  kotlin-lsp:
+    disabled: true
+
+  # The GUI source worktrees are nested/parallel checkouts, while the parent
+  # OMP session cwd has no Cargo.toml/package.json. Explicit root markers keep
+  # semantic servers routable by file path without changing other servers.
+  rust-analyzer:
+    rootMarkers: ["."]
+  typescript-language-server:
+    rootMarkers: ["."]
+  svelte:
+    rootMarkers: ["."]
+
+# Shut down language servers after 5 minutes idle. With 28 project roots and
+# lsp.shared enabled, without this the servers accumulate across a session.
+idleTimeoutMs: 300000

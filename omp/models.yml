@@ -1,0 +1,21 @@
+# Codex context windows (2026-10-24). OpenAI raised GPT-6.1 Sol's Codex/Work default from 272K to
+# 500K (OMP's catalog already lists 500K for it). Every other Codex model used here is set to the
+# same 500K. An explicit contextWindow wins globally for its provider/model identity, including task
+# children. Backend acceptance of 500K is announced for gpt-6.1-sol only; the others are
+# owner-directed. Subscription usage has no long-context fee; the >272K surcharge is API billing.
+providers:
+  openai-codex:
+    modelOverrides:
+      gpt-6-astra:
+        contextWindow: 500000
+      gpt-6-sol:
+        contextWindow: 500000
+      gpt-6-luna:
+        contextWindow: 500000
+      gpt-5.6-sol:
+        contextWindow: 500000
+      gpt-daybreak-blue-latest:
+        contextWindow: 500000
+
+# Anthropic models retain their discovered catalog limits; no account-credit
+# or subscription billing guarantees are inferred from context metadata.

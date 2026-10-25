@@ -1,0 +1,21 @@
+[user]
+	name = 1vivy
+	email = 1vivy@tutanota.com
+	signingkey = 17AF2E7CF5D77BBC08D9D17B97B197860AFFE0A3
+[commit]
+	gpgsign = true
+[gpg]
+	program = gpg
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[include]
+	path = ~/.gitconfig.local

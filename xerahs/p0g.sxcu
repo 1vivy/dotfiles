@@ -1,0 +1,16 @@
+{
+  "Version": "17.0.0",
+  "Name": "p0g (random)",
+  "DestinationType": "ImageUploader, TextUploader, FileUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://share.p0g.ca/api/upload",
+  "Headers": {
+    "authorization": "REPLACE_WITH_ZIPLINE_TOKEN",
+    "x-zipline-format": "random",
+    "x-zipline-original-name": "true"
+  },
+  "Body": "MultipartFormData",
+  "FileFormName": "file",
+  "URL": "{json:files[0].url}",
+  "ErrorMessage": "{json:error}"
+}

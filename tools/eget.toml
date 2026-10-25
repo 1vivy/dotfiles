@@ -1,0 +1,7 @@
+[global]
+upgrade_only = true
+show_hash = true
+
+["KernelSU-Next/KernelSU-Next"]
+asset_filters = ["ksud-x86_64-unknown-linux-musl"]
+target = "/usr/local/bin/ksud"

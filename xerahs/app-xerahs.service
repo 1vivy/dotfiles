@@ -1,0 +1,17 @@
+[Unit]
+Description=XerahS screenshot and upload tool (tray)
+Documentation=https://github.com/KovaForge/XerahS
+PartOf=graphical-session.target
+After=graphical-session.target plasma-workspace.target
+# Unit name follows the XDG app-<id>.service convention so portals and
+# KWin resolve it to xerahs.desktop (screenshot permission).
+
+[Service]
+Type=exec
+ExecStart=%h/.local/opt/xerahs/XerahS
+Restart=on-failure
+RestartSec=3
+Slice=app-graphical.slice
+
+[Install]
+WantedBy=graphical-session.target

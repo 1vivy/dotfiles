@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "daemon": {
+    "listen": "127.0.0.1:6767",
+    "agentProfiles": [
+      {
+        "id": "agent_profile_muxwbav0_78trlwzm81i",
+        "name": "GPT Main",
+        "provider": "omp",
+        "model": "codex-main/gpt-6.1-sol",
+        "modeId": "full",
+        "thinkingOptionId": "high",
+        "notes": "OMP Secondary Default Main Agent"
+      },
+      {
+        "id": "agent_profile_muyqbgqw_mfjoiaqtsxr",
+        "name": "Main OMP",
+        "color": "orange",
+        "provider": "omp",
+        "model": "anthropic/claude-opus-5-5",
+        "modeId": "full",
+        "thinkingOptionId": "high",
+        "notes": "Main default agent for OMP"
+      }
+    ],
+    "cors": {
+      "allowedOrigins": [
+        "https://app.paseo.sh"
+      ]
+    },
+    "relay": {
+      "enabled": true
+    }
+  },
+  "app": {
+    "baseUrl": "https://app.paseo.sh"
+  },
+  "agents": {
+    "providers": {
+      "omp": {
+        "enabled": true
+      }
+    }
+  }
+}

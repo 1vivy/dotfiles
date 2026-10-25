@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# pre-commit: refuse to commit secrets.
+# Installed by install.sh via: git config core.hooksPath <repo>/hooks
+set -euo pipefail
+
+run_gitleaks() {
+  if command -v gitleaks >/dev/null 2>&1; then
+    gitleaks "$@"
+  elif command -v nix >/dev/null 2>&1; then
+    nix run nixpkgs#gitleaks -- "$@"
+  else
+    echo "pre-commit: gitleaks not found (install gitleaks or nix); refusing to commit" >&2
+    exit 1
+  fi
+}
+
+# gitleaks >= 8.19 deprecates `protect` in favour of `git --staged`.
+if run_gitleaks protect --staged --redact --no-banner; then
+  exit 0
+fi
+echo "pre-commit: gitleaks protect reported findings or failed; retrying with 'git --staged'" >&2
+run_gitleaks git --staged --redact --no-banner

@@ -1,0 +1,184 @@
+setupVersion: 2
+symbolPreset: nerd
+theme:
+  dark: titanium
+  light: light
+defaultThinkingLevel: auto
+modelRoles:
+  default: anthropic/claude-opus-5-5
+  plan: anthropic/claude-mythos-5-1:xhigh
+  slow: anthropic/claude-fable-5-1:xhigh
+  oracle: openai-codex/gpt-6-astra:high
+  task: openai-codex/gpt-6.1-sol:medium
+  smol: omni/opencode-go/deepseek-v4.1-flash
+  tiny: openai-codex/gpt-6-luna:low
+  commit: omni/opencode-go/deepseek-v4.1-flash:low
+  advisor: anthropic/claude-sonnet-5-5:high
+  security: openai-codex/gpt-daybreak-blue-latest:high
+  designer: anthropic/claude-sonnet-5-5:high
+  vision: openai-codex/gpt-5.6-sol:low
+cycleOrder:
+  - smol
+  - default
+  - slow
+modelProviderOrder:
+  - openai-codex
+  - anthropic
+  - omni
+  - deepseek
+providers:
+  autoThinkingMaxEffort: max
+  webSearchOrder:
+    - searxng
+searxng:
+  endpoint: https://search.p0g.ca
+task:
+  agentModelOverrides:
+    security-reviewer:
+      - "@security"
+      - "@oracle"
+    reviewer:
+      - anthropic/claude-opus-5-5
+      - openai-codex/gpt-6-astra:xhigh
+  agentPrewalk:
+    task: omni/opencode-go/deepseek-v4.1-flash:high
+  maxConcurrency: 32
+  batch: true
+  eager: default
+  enableLsp: true
+  enableEffort: false
+  showResolvedModelBadge: true
+  maxEffort: xhigh
+  maxRecursionDepth: 2
+  softRequestBudget: 200
+  isolation:
+    enabled: true
+    merge: branch
+retry:
+  fallbackChains:
+    default:
+      - openai-codex/gpt-6-sol:medium
+      - openai-codex/gpt-5.6-sol:medium
+    plan:
+      - openai-codex/gpt-6-astra:xhigh
+      - anthropic/claude-opus-5-5:xhigh
+    slow:
+      - openai-codex/gpt-6-astra:xhigh
+      - openai-codex/gpt-6.1-sol:xhigh
+    oracle:
+      - openai-codex/gpt-6.1-sol:xhigh
+      - anthropic/claude-opus-5-5
+    task:
+      - openai-codex/gpt-5.6-sol:medium
+      - deepseek/deepseek-flash:high
+    smol:
+      - deepseek/deepseek-flash:auto
+      - openai-codex/gpt-6-luna:low
+      - anthropic/claude-sonnet-5:low
+    tiny:
+      - deepseek/deepseek-flash:low
+      - anthropic/claude-sonnet-5:low
+    commit:
+      - deepseek/deepseek-flash:low
+      - openai-codex/gpt-6-luna:low
+      - anthropic/claude-sonnet-5:low
+    advisor:
+      - openai-codex/gpt-5.6-sol:medium
+      - deepseek/deepseek-flash:high
+    security:
+      - openai-codex/gpt-6-astra:high
+      - openai-codex/gpt-6.1-sol:high
+      - openai-codex/gpt-5.6-sol:high
+    designer:
+      - deepseek/deepseek-flash:high
+    vision:
+      - anthropic/claude-sonnet-5-5:medium
+      - deepseek/deepseek-flash:high
+contextPromotion:
+  enabled: true
+extendedContext: false
+memory:
+  backend: hindsight
+hindsight:
+  apiUrl: https://hindsight-api.p0g.ca
+  scoping: per-project-tagged
+  bankId: dev-workspace-pi-coding
+  recallTypes:
+    - observation
+  bankMission: "Synthesize current, scoped guidance from directly supported facts. Do not generalize one-off task checklists, test counts or archived skills into recurring policy. Owner reset 2026-10-10: smallest real observation; no automatic instrument framework, fake device, test suite, report schema, redundant qualification, default worktree, or restored skill. Permanent tests protect consumer-visible behavior and safety; affected verification and integration once, not full suites for investigations. Keep only factual, current, demonstrably used evidence. Preserve technical facts and device authorization; relearn device procedures with the owner."
+  retainMission: "Extract durable current facts, decisions and explicit preferences; preserve scope and dates. Owner reset 2026-10-10 also applies when reprocessing old documents: do not extract retired skills, default worktree isolation, per-probe harness/test/receipt machinery, diagnostic-pinning tests, or blanket independent qualification as current obligations. One-off task checklists and test counts are not enduring policy. Keep technical and safety facts; evidence must be factual, current and demonstrably used. Device procedures require relearning with the owner, not restoration from old recipes."
+  mentalModelsEnabled: true
+  mentalModelMaxRenderChars: 5000
+tools:
+  approvalMode: yolo
+secrets:
+  enabled: true
+bashInterceptor:
+  enabled: true
+bash:
+  patterns:
+    - match: "*fastboot* flash*"
+      approval: ask
+    - match: "*fastboot* erase*"
+      approval: ask
+    - match: "*fastboot* format*"
+      approval: ask
+    - match: "*fastboot* wipe*"
+      approval: ask
+    - match: "*fastboot* update*"
+      approval: ask
+    - match: "*fastboot* -w*"
+      approval: ask
+    - match: "*fastboot* set_active*"
+      approval: ask
+    - match: "*fastboot* --set-active*"
+      approval: ask
+    - match: "*of=/dev/sd*"
+      approval: ask
+    - match: "*of=/dev/nvme*"
+      approval: ask
+    - match: "*of=/dev/mmcblk*"
+      approval: ask
+    - match: "*of=/dev/block/*"
+      approval: ask
+    - match: "*of=/dev/disk/*"
+      approval: ask
+    - match: "*edl w*"
+      approval: ask
+    - match: "*edl e*"
+      approval: ask
+    - match: "*edl qfil*"
+      approval: ask
+lsp:
+  enabled: true
+  lazy: true
+  shared: true
+  diagnosticsOnWrite: true
+  diagnosticsOnEdit: false
+skills:
+  ignoredSkills:
+    - hindsight-coding-agent
+composer:
+  shape: box
+dev:
+  autoqaConsent: granted
+browser:
+  headless: true
+terminal:
+  showProgress: true
+autolearn:
+  enabled: false
+  autoContinue: false
+computer:
+  enabled: true
+github:
+  enabled: true
+startup:
+  quiet: true
+isolation:
+  backend: auto
+tui:
+  completeScrollback: true
+  tight: true
+display:
+  smoothStreaming: false

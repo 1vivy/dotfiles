@@ -1,0 +1,35 @@
+[Desktop Entry]
+Name=XerahS
+Comment=Cross-platform screen capture and sharing tool
+GenericName=Screen Capture
+Exec=/home/vivy/.local/opt/xerahs/XerahS %U
+Icon=xerahs
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/xerahs;
+Categories=Utility;Graphics;
+Keywords=screenshot;screen;capture;share;upload;
+StartupWMClass=xerahs
+X-GNOME-UsesNotifications=true
+X-KDE-DBUS-Restricted-Interfaces=org.kde.KWin.ScreenShot2
+Actions=FullScreen;Region;Window;Record;FileUpload;
+
+[Desktop Action FullScreen]
+Name=Capture full screen and upload
+Exec=/home/vivy/.local/opt/xerahs/omaxerahs workflow run d1eb872c-24eb-44fc-9517-ea9117c45434
+
+[Desktop Action Region]
+Name=Capture region, annotate and upload
+Exec=/home/vivy/.local/opt/xerahs/omaxerahs workflow run 52d0773b-fca8-471e-b0a3-78376777b5a3
+
+[Desktop Action Window]
+Name=Capture active window and upload
+Exec=/home/vivy/.local/opt/xerahs/omaxerahs workflow run 26aaf5ef-82c4-4452-a29e-13a94d9c287b
+
+[Desktop Action Record]
+Name=Start/stop screen recording
+Exec=/home/vivy/.local/opt/xerahs/omaxerahs workflow run 5bb01573-4cb3-4da5-a967-04ea4bbe1268
+
+[Desktop Action FileUpload]
+Name=Upload a file
+Exec=/home/vivy/.local/opt/xerahs/omaxerahs workflow run 6d0688e0-b8b3-4c7e-a235-a420071b4bf5

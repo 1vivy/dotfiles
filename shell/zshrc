@@ -1,0 +1,212 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time Oh My Zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="robbyrussell"
+
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+
+# Uncomment the following line to change how often to auto-update (in days).
+# zstyle ':omz:update' frequency 13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+[[ -f $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# EDITOR/VISUAL (Gram) come from ~/.config/environment.d/editor.conf on the workstation.
+
+# Compilation flags
+# export ARCHFLAGS="-arch $(uname -m)"
+
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+for _p10k_theme in /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme; do
+  [[ -f $_p10k_theme ]] && { source $_p10k_theme; break; }
+done
+unset _p10k_theme
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# `omp update`: reconcile local prompt overrides with the deterministic updater.
+# Exit 3 prints the review needed; it does not dispatch an archived skill or model session.
+omp-reconcile() {
+  local zshrc=~/.zshrc
+  python3 "${zshrc:A:h:h}/omp/prompts/reconcile-omp.py" "$@"
+}
+omp() {
+  if [[ $1 != update || " $* " == *" -c "* || " $* " == *" --check "* ]]; then
+    command omp "$@"
+    return
+  fi
+  local before after
+  before=$(command omp --version 2>/dev/null)
+  command omp "$@" || return
+  after=$(command omp --version 2>/dev/null)
+  [[ $before == "$after" ]] || { print "omp: $before -> $after, reconciling prompt overrides"; omp-reconcile; }
+}
+
+# Dotfiles freshness, oh-my-zsh reminder style: fetch origin in the background at most once a
+# day, and report on shell start when this checkout is behind or ahead. `dotfiles-update`
+# fast-forwards and re-runs install.sh with the profile it was last installed with.
+_dotfiles_freshness() {
+  local zshrc=~/.zshrc dir state stamp behind ahead
+  local -a stale
+  dir=${zshrc:A:h:h}
+  [[ -d $dir/.git ]] || return
+  state=${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles
+  stamp=$state/last-fetch
+  stale=( $stamp(Nmh+23) )
+  if [[ ! -e $stamp || -n $stale ]]; then
+    mkdir -p $state && : >| $stamp
+    ( GIT_TERMINAL_PROMPT=0 git -C $dir fetch -q origin >/dev/null 2>&1 & ) 2>/dev/null
+  fi
+  behind=$(git -C $dir rev-list --count HEAD..@{u} 2>/dev/null) || return
+  ahead=$(git -C $dir rev-list --count @{u}..HEAD 2>/dev/null)
+  (( behind )) && print -P "%F{yellow}dotfiles: $behind commit(s) behind origin; run dotfiles-update%f"
+  (( ahead )) && print -P "%F{yellow}dotfiles: $ahead local commit(s) not pushed%f"
+  return 0
+}
+_dotfiles_freshness
+dotfiles-update() {
+  local zshrc=~/.zshrc dir profile
+  dir=${zshrc:A:h:h}
+  local f=${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/profile
+  [[ -r $f ]] && profile=$(<$f)
+  [[ -n $profile ]] || { print -u2 "dotfiles-update: no recorded profile; run install.sh --profile <name> once"; return 2; }
+  git -C $dir fetch -q origin && git -C $dir merge --ff-only @{u} && $dir/install.sh --profile $profile
+}
+
+# Bitwarden SSH Agent (the macOS app is sandboxed, so its socket lives in its container)
+if [[ $OSTYPE == darwin* ]]; then
+  export SSH_AUTH_SOCK=~/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock
+else
+  export SSH_AUTH_SOCK=~/.bitwarden-ssh-agent.sock
+fi
+
+# ~/.local/bin for oplus-logs
+export PATH="$HOME/.local/bin:$PATH"
+
+
+# Gram never installs its SSH remote server. Install the matching release binary on a host
+# before the first "Connect" from Gram: gram-remote-install [user@]host
+gram-remote-install() {
+  local host=${1:?usage: gram-remote-install [user@]host} ver os arch asset bin cache sha rsha
+  ver=${${(z)"$(command gram --version)"}[2]%%-*} || return
+  read -r os arch <<<"$(ssh "$host" uname -sm)" || return
+  os=${os:l}; [[ $os == darwin ]] && os=macos; [[ $arch == arm64 ]] && arch=aarch64
+  asset=gram-remote-server-$os-$arch-$ver.gz
+  [[ $os == macos ]] && asset=gram-remote_server-$os-$arch-$ver.gz
+  bin=gram-remote-server-stable-$ver
+  cache=${XDG_CACHE_HOME:-$HOME/.cache}/gram-remote-server/$os-$arch-$ver
+  if [[ ! -s $cache ]]; then
+    mkdir -p ${cache:h} &&
+      curl -fL "https://codeberg.org/GramEditor/gram/releases/download/$ver/$asset" | gunzip >$cache.part &&
+      mv $cache.part $cache || { rm -f $cache.part; return 1; }
+  fi
+  sha=$( (sha256sum || shasum -a 256) <$cache 2>/dev/null) && sha=${sha%% *}
+  rsha=$(ssh "$host" "mkdir -p .gram_server && cat >.gram_server/$bin.part && chmod +x .gram_server/$bin.part &&
+    mv .gram_server/$bin.part .gram_server/$bin && .gram_server/$bin version >&2 &&
+    { sha256sum || shasum -a 256; } <.gram_server/$bin" <$cache) || return
+  [[ ${rsha%% *} == $sha ]] || { print -u2 "gram-remote-install: $host checksum mismatch"; return 1; }
+  print "gram-remote-install: $host ~/.gram_server/$bin ($sha)"
+}
+
+# SSH into the hermes-uni container as the hermes user
+uni-ssh() { ssh -t atlas-apps2 "docker exec -it -u 10000:10000 hermes-uni ${@:-/bin/sh}"; }
+
+# Add bun to path
+export PATH="$HOME/.bun/bin:$PATH"
+
+# Homebrew openjdk (keg-only on macOS)
+[[ -d /opt/homebrew/opt/openjdk/bin ]] && export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# Node via fnm: a per-shell node that follows .node-version/.nvmrc on cd (FNM_DIR is in zshenv).
+command -v fnm >/dev/null && eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
+
+# gpg pinentry can find the terminal (fixes signing timeouts)
+if tty -s; then export GPG_TTY=$(tty); fi

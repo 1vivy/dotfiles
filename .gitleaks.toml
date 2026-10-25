@@ -1,0 +1,17 @@
+# gitleaks configuration.
+#
+# Default rules apply; this file only records deliberate, reviewed allowlists.
+# Every allowlist here must name a public value, never a secret.
+
+[extend]
+useDefault = true
+
+# The git config carries a GPG signing key *fingerprint* — public by design and
+# required in the file for commit signing. Its hex shape trips the generic-api-key
+# entropy rule. Allowed only on that exact line in that exact file.
+[[allowlists]]
+description = "public GPG signing key fingerprint in git/gitconfig"
+paths = ['''^git/gitconfig$''']
+regexTarget = "line"
+regexes = ['''^[ \t]*signingkey[ \t]*=[ \t]*[0-9A-F]{40}[ \t]*$''']
+targetRules = ["generic-api-key"]

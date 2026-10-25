@@ -1,0 +1,46 @@
+# Loaded by every zsh (interactive AND non-interactive), unlike ~/.zshrc.
+# Env that must be present when tmux servers, background daemons, or any
+# other non-interactive shells start belongs here, not in ~/.zshrc.
+
+
+# Hindsight dev-workspace memory bearer (bank: borrrk-infra).
+# The 43-char base64url token lives ONLY in the 0600 file below, written by
+# `install.sh` from secrets/hindsight-dev-workspace.token.age (manifest `decrypt` row).
+# NEVER inline the token here (this file is world-readable).
+if [ -s "$HOME/.hindsight/secrets/hindsight-dev-workspace.token" ]; then
+  export HINDSIGHT_API_TOKEN_DEV_WORKSPACE="$(< "$HOME/.hindsight/secrets/hindsight-dev-workspace.token")"
+  export HINDSIGHT_API_TOKEN="$HINDSIGHT_API_TOKEN_DEV_WORKSPACE"
+fi
+
+# Native pi-hindsight connection settings (the bearer remains in the file above).
+export HINDSIGHT_BASE_URL="https://hindsight-api.p0g.ca"
+export HINDSIGHT_API_KEY_REF="HINDSIGHT_API_TOKEN"
+export PI_HINDSIGHT_PROJECT_BANK_ID="dev-workspace-pi-coding"
+
+# GUI askpass. OpenSSH and sudo fall back to $SSH_ASKPASS / $SUDO_ASKPASS whenever
+# they have no controlling tty — agent tool calls, desktop launchers, systemd units.
+# Arch ships no binary at OpenSSH's compiled-in /usr/lib/ssh/ssh-askpass, so that
+# fallback died with "exec(...): No such file or directory" and the prompt was never
+# shown. SSH_ASKPASS_REQUIRE is deliberately NOT set: unset means "askpass only when
+# there is no tty", so terminal sessions keep prompting in the terminal.
+if [ -x "$HOME/.local/bin/ssh-askpass-gui" ]; then
+  export SSH_ASKPASS="$HOME/.local/bin/ssh-askpass-gui"
+  export SUDO_ASKPASS="$HOME/.local/bin/ssh-askpass-gui"
+fi
+
+# Bitwarden CLI session key, for unattended vault reads.
+# Populate once per login with `bw-unlock` (GUI prompt); revoke with `bw-lock`.
+# The key lives ONLY in the 0600 tmpfs file below — never in this world-readable
+# file, never on persistent storage — and the kernel drops it at logout.
+_bw_session_file="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/bw-session"
+if [ -s "$_bw_session_file" ]; then
+  export BW_SESSION="$(< "$_bw_session_file")"
+fi
+unset _bw_session_file
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# Node via fnm on every host. The default alias is the node for non-interactive shells and
+# services; interactive shells follow .node-version/.nvmrc through zshrc's `fnm env`.
+export FNM_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/fnm"
+export FNM_COREPACK_ENABLED=true
+[ -d "$FNM_DIR/aliases/default/bin" ] && export PATH="$FNM_DIR/aliases/default/bin:$PATH"
