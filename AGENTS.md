@@ -23,8 +23,23 @@ The repository is public. Everything committed is published.
 - The age identity comes from the Bitwarden item in `secrets/age-identity.bw-item` through
   `install.sh`'s interactive unlock, or by copying the identity file between hosts over SSH with
   mode 0600.
-- Host-specific values that are private but not secret (addresses, paths) go in an encrypted file
-  or in a host-local override such as `~/.gitconfig.local`.
+- Host addresses (LAN and tailnet IPs) are private but not secret: they go in an encrypted file or
+  a host-local override such as `~/.gitconfig.local`.
+
+## Public detail
+
+Everything committed, commit messages included, is published. Keep functional values where the
+config needs them and keep prose generic.
+
+- May be committed: home-relative paths (`~/Documents/Obsidian/University`), host aliases
+  (`atlas-agent`), repository names (`1vivy/borrrk-infra`) and endpoints a config file needs to
+  work (`omp/config.yml`, `shell/zshenv`).
+- Comments, docs and commit messages name things by role ("the Hermes agent", "the agent's staged
+  writer", "the sync server"). They do not name agent personas or profiles, internal service
+  endpoints or scripts, schools, courses or people.
+- Point at the private repository for specifics (`borrrk-infra resources/services/<name>/`) rather
+  than restating them here.
+- Before committing, `git grep` the change for such names. History rewrites are the owner's call.
 
 ## Changes
 

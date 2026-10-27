@@ -247,7 +247,8 @@ on the Mac.
   without Obsidian running. Its write tools are denied in `omp/config.yml` (`tools.approval`, which
   holds in every approval mode and in subagents; OMP's MCP config has no tool filter): writes into
   the hub go through the agent's staged writer or an Obsidian client. MCPVault refuses
-  `.obsidian/`; settings are read here.
+  `.obsidian/`; settings are read here. The SSH hop authenticates through the Bitwarden agent
+  socket that `shell/zshrc` exports, so start OMP from an interactive shell on hosts that use it.
 
 ## Notes
 
