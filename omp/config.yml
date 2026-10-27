@@ -111,6 +111,15 @@ hindsight:
   mentalModelMaxRenderChars: 5000
 tools:
   approvalMode: yolo
+  approval:
+    # obsidian MCP (omp/mcp-all.json) reads the hub vault only; writes go through vault_write.py
+    mcp__obsidian_write_note: deny
+    mcp__obsidian_patch_note: deny
+    mcp__obsidian_delete_note: deny
+    mcp__obsidian_move_note: deny
+    mcp__obsidian_move_file: deny
+    mcp__obsidian_update_frontmatter: deny
+    mcp__obsidian_manage_tags: deny
 secrets:
   enabled: true
 bashInterceptor:

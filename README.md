@@ -244,8 +244,10 @@ the Mac.
 - **MCP:** `omp/mcp-all.json` (linked as `~/.omp/agent/.mcp.json` on every OMP host, the Mac
   included) defines the `obsidian` server. `tools/obsidian-mcp` runs MCPVault on the hub copy on
   atlas-agent, and over `ssh atlas-agent` from other hosts, so every host sees the same current notes
-  without Obsidian running. Only read tools are enabled: writes into the hub go through Haerin's
-  `vault_write.py` or an Obsidian client. MCPVault refuses `.obsidian/`; settings are read here.
+  without Obsidian running. Its write tools are denied in `omp/config.yml` (`tools.approval`, which
+  holds in every approval mode and in subagents; OMP's MCP config has no tool filter): writes into
+  the hub go through Haerin's `vault_write.py` or an Obsidian client. MCPVault refuses
+  `.obsidian/`; settings are read here.
 
 ## Notes
 

@@ -2,8 +2,8 @@
 # Obsidian MCP over the University hub vault: the plain-file LiveSync mirror on atlas-agent that
 # Haerin and DeepTutor read (borrrk-infra obsidian-sync). atlas-agent runs MCPVault on it directly;
 # every other host runs this script there over SSH, so all hosts see the same current notes.
-# omp/mcp-all.json exposes only read tools: writes into the hub go through Haerin's vault_write.py
-# or through an Obsidian client, never straight onto the NFS mirror.
+# omp/config.yml denies MCPVault's write tools: writes into the hub go through Haerin's
+# vault_write.py or through an Obsidian client, never straight onto the NFS mirror.
 set -eu
 vault="$HOME/University/vault"
 if [ -d "$vault" ]; then
