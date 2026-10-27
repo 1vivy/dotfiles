@@ -22,6 +22,7 @@ the user-level files that live in the homes.
 | `omp/ROLES.md`, `omp/omo-model-criteria.md` | Documentation only — role catalogue and model-selection criteria. Never installed |
 | `shell/`, `git/`, `ssh/config.d/`, `terminal/`, `tools/` | Shell, git, ssh, terminal emulator and small tool configs |
 | `xerahs/` | XerahS launcher (capture actions bound by KDE shortcuts) and its `app-xerahs.service` tray unit; workstation only. Uploader configs hold the Zipline token and are never committed |
+| `obsidian/PLAN.md` | Pending Obsidian adoption plan; nothing installed yet |
 | `manifest.tsv` | The install manifest: `mode, repo_path, target, profiles` |
 | `install.sh` | Adopter |
 | `secrets/`, `.sops.yaml` | age ciphertext (`*.age`), the sops dotenv `session.env` for session environment secrets, the public `recipients.txt`, and `age-identity.bw-item` (the Bitwarden item ID holding the private identity); `.sops.yaml` holds the sops creation rule |
