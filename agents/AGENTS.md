@@ -1,38 +1,43 @@
 # Working agreements
 
-Applies to every repository on the owner's machines. A repository's own AGENTS.md extends this file
-and wins within its scope.
+These agreements apply to the owner's repositories.
+Repository instructions extend them and take precedence within their scope.
 
-## Evidence
+## Working together
 
-- Treat a failed, empty or non-matching probe as unknown until a probe that would match has run; test
-  the pattern against a known-present case first. A misnamed grep target, a locked vault and a
-  remembered digest each produced false "absent" findings before.
-- Verify backups and transfers by restore-and-compare. Exit status and schema checks confirm shape,
-  not content: a truncated `tar | ssh` stream once exited 0.
-- Owner markers `**( ... )**` in any document are owner directives; keep them verbatim and reconcile
-  work against them.
-- Answer engineering questions with the smallest real observation. Build an instrument (CLI, runner,
-  fixture, permanent test, report schema) when the work needs it again.
-- Permanent tests cover consumer-visible behavior and safety boundaries. Verify changed behavior on
-  its real surface.
-- Keep evidence that a live claim or open question uses.
+- Criticize assumptions, designs, and workflow when the evidence supports the criticism.
+- Name the concrete risk. Propose a practical correction.
+- Treat corrections as improvements to our work, not as reasons to add ceremony.
+- Use the current checkout and Git history as facts. Treat memory as context, not authority.
+- Keep repository `AGENTS.md` useful for orientation, commands, local constraints, and links to deeper guidance.
+- Keep product explanations in project documentation and tool mechanics in the shared harness.
+- Preserve owner markers `**( ... )**` verbatim. Reconcile the work against these directives.
+
+## Skills and evidence
+
+- Use `engineering-evidence` for investigations, contract comparisons, uncertain probes, and claims about behavior or completion.
+- Start with the smallest observation that can change the decision.
+- Keep evidence that supports an active claim or unresolved question.
+- Use `asd-ste100` when project guidance requires it or technical wording needs clarification.
+- Read shared skills at `~/.agents/skills/<name>/SKILL.md`.
 
 ## Git
 
-- Commit owned implementation work as focused commits after its verification; report short SHA and
-  subject. Investigations and documentation need no build or full suite.
-- Work in the owner's checkout. Push, force-push, worktrees and discarding work follow the owner's
-  direction; preserve local commits and unique evidence first.
-- Commits sign with the agent key from `~/.gitconfig`. The owner key `616B6A6050DF1E4B` stays with
-  the owner; its pinentry needs a TTY.
+- Commit owned implementation work as focused commits after checking it.
+- Report the short SHA and subject.
+- Investigations and documentation need no build or full suite unless the change affects those paths.
+- Work in the owner's checkout. Follow the owner's direction for pushes, worktrees, and history changes.
+- Preserve existing edits before diagnostics. Remove only the diagnostic changes you own.
+- Never discard another writer's changes as diagnostic cleanup.
+- Sign with the agent key from `~/.gitconfig`.
+- The owner key `616B6A6050DF1E4B` stays with the owner.
 
 ## Dangerous operations
 
-- Each dangerous class (push, critical device writes, build entry, extraction, history rewrite) has
-  one audited boundary. On a refusal, reconcile the actual target and state; an override names the
-  observed value.
-- Prove read-only before relying on it; probe opaque surfaces with short known-good lists.
-- Look at a target before deleting or overwriting it, and surface any mismatch with its description.
-- Device writes run through the Bash tool, where `~/.omp/agent/config.yml` holds approval for fastboot
-  flashing, slot selection and raw block writes.
+- Use the existing approval boundary for each dangerous operation.
+- Reconcile the actual target and state after a refusal.
+- Name the observed value when requesting an override.
+- Establish read-only behavior before relying on an unfamiliar interface.
+- Inspect a target before deleting or overwriting it.
+- Stop when the target differs from its description.
+- Use the Bash tool and its approval boundary for device writes.

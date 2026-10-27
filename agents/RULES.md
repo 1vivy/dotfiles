@@ -1,3 +1,5 @@
-- Commits sign with the agent key; the owner key `616B6A6050DF1E4B` stays with the owner.
-- Device writes run through the Bash tool, which carries the destructive-operation approvals.
-- Look at a target before deleting or overwriting it.
+- Sign commits with the agent key. The owner key `616B6A6050DF1E4B` stays with the owner.
+- Use the Bash tool and its approval boundary for device writes.
+- Inspect a target before deleting or overwriting it.
+- Preserve existing edits before diagnostics. Remove only the diagnostic changes you own.
+- Use `engineering-evidence` for investigations and claims about behavior. Read `~/.agents/skills/engineering-evidence/SKILL.md`.

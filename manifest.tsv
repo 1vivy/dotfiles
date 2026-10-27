@@ -10,9 +10,11 @@ link	agents/skills	~/.agents/skills	all
 link	agents/skills	~/.claude/skills	workstation,atlas-agent
 link	agents/skills/omp-wayland-pipewire-capture-repair	~/.codex/skills/omp-wayland-pipewire-capture-repair	all
 link	agents/skills/asd-ste100	~/.codex/skills/asd-ste100	all
+link	agents/skills/engineering-evidence	~/.codex/skills/engineering-evidence	all
 # macOS Claude Desktop syncs its own skills into ~/.claude/skills/synced, so link per skill there
 link	agents/skills/omp-wayland-pipewire-capture-repair	~/.claude/skills/omp-wayland-pipewire-capture-repair	mac
 link	agents/skills/asd-ste100	~/.claude/skills/asd-ste100	mac
+link	agents/skills/engineering-evidence	~/.claude/skills/engineering-evidence	mac
 link	omp/config.yml	~/.omp/agent/config.yml	workstation,atlas-agent,mac
 link	omp/models.yml	~/.omp/agent/models.yml	workstation,atlas-agent,mac
 link	omp/mcp.json	~/.omp/agent/mcp.json	workstation,atlas-agent

@@ -1,7 +1,8 @@
 # dotfiles
 
-Owner harness configuration for the `1vivy` estate. Private. One clone per host, adopted with
-`./install.sh`.
+These public dotfiles configure the owner's agent and user environments.
+Each host uses one clone.
+Install the selected profile with `./install.sh`.
 
 This repository holds the harness dotfiles the owner actually runs: agent context files, skills,
 OMP config, Claude/Codex/Paseo config, shell, git, ssh, terminal and small tool configs. It is not a
@@ -15,7 +16,7 @@ the user-level files that live in the homes.
 | `AGENTS.md` | Agent instructions for working in this repository (not installed) |
 | `agents/AGENTS.md` | Global working agreements; linked to `~/.agents/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` |
 | `agents/RULES.md` | OMP sticky rules (always applied, also inside task subagents, which do not receive `AGENTS.md`); linked to `~/.omp/agent/RULES.md` |
-| `agents/skills/<name>/` | The 2 harness skills; linked as `~/.agents/skills` and `~/.claude/skills`, and per-skill into `~/.codex/skills/<name>` |
+| `agents/skills/<name>/` | Shared skills for OMP, Claude, and Codex, installed through directory or per-skill links |
 | `omp/` | OMP user config (`config.yml`, `models.yml`, `mcp.json`, `lsp.yaml`, `SYSTEM_TEMPLATE.md`) |
 | `omp/prompts/` | `SYSTEM_TEMPLATE.md` builder, vendored upstream prompts and the post-upgrade `reconcile-omp.py` run by `omp-reconcile` / `omp update`. Never installed |
 | `omp/ROLES.md`, `omp/omo-model-criteria.md` | Documentation only — role catalogue and model-selection criteria. Never installed |
@@ -54,6 +55,11 @@ Third-party skills are git submodules pinned to a reviewed commit (currently
 `git submodule update --init` before linking, and `--check` reports a submodule that is
 uninitialized (`missing`) or off its pin (`drift`). To take an upstream update, review it, then
 `git -C agents/skills/<name> pull` and commit the new pin.
+
+`engineering-evidence` guides investigations, contract comparisons, and bounded claims about results.
+The shared agent instructions select it for those tasks.
+It requires no report template, permanent test suite, or new CI gate.
+Repository instructions retain the project's commands, conventions, and acceptance criteria.
 
 ## Profiles
 
