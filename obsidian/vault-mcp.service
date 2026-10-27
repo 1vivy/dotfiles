@@ -1,0 +1,13 @@
+[Unit]
+Description=Obsidian vault MCP on the tailnet (tools/vault-mcp-serve)
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart=%h/.local/bin/vault-mcp-serve
+# tailscale serve fails until tailscaled is connected; retry instead of giving up.
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

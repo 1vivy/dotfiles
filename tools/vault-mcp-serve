@@ -1,0 +1,17 @@
+#!/bin/sh
+# Serve this device's Obsidian vault as MCP on the tailnet, so agents on any host (the Hermes
+# agent on atlas-agent, OMP everywhere) can read and fix it: `notes` is MCPVault over the vault
+# (read-write; LiveSync carries edits to the other devices) and `settings` is a filesystem server
+# over the vault's .obsidian/ (MCPVault refuses that directory). One mcp-proxy on loopback
+# exposes both at /servers/<name>/mcp; `tailscale serve` publishes it as tailnet-only HTTPS.
+# No caller check beyond tailnet reachability.
+set -eu
+port=8470
+vault="$HOME/Documents/Obsidian/University"
+PATH="$HOME/.local/share/fnm/aliases/default/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+[ -d "$vault/.obsidian" ] || { echo "vault-mcp-serve: no vault at $vault" >&2; exit 1; }
+ts=$(command -v tailscale || echo /Applications/Tailscale.app/Contents/MacOS/Tailscale)
+"$ts" serve --bg --https="$port" "http://127.0.0.1:$port" >/dev/null
+exec uvx --from mcp-proxy==0.13.0 mcp-proxy --host 127.0.0.1 --port "$port" --pass-environment \
+  --named-server notes "npx -y @bitbonsai/mcpvault@0.17.1 $vault" \
+  --named-server settings "npx -y @modelcontextprotocol/server-filesystem@2.0.1 $vault/.obsidian"

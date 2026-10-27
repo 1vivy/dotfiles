@@ -22,7 +22,7 @@ the user-level files that live in the homes.
 | `omp/ROLES.md`, `omp/omo-model-criteria.md` | Documentation only — role catalogue and model-selection criteria. Never installed |
 | `shell/`, `git/`, `ssh/config.d/`, `terminal/`, `tools/` | Shell, git, ssh, terminal emulator and small tool configs |
 | `xerahs/` | XerahS launcher (capture actions bound by KDE shortcuts) and its `app-xerahs.service` tray unit; workstation only. Uploader configs hold the Zipline token and are never committed |
-| `obsidian/` | Shared settings of the University vault, linked into its `.obsidian/` on the workstation and Mac |
+| `obsidian/` | User units that serve each device's University vault as MCP on the tailnet (`vault-mcp.service`, `vault-mcp.plist`) |
 | `manifest.tsv` | The install manifest: `mode, repo_path, target, profiles` |
 | `install.sh` | Adopter |
 | `secrets/`, `.sops.yaml` | age ciphertext (`*.age`), the sops dotenv `session.env` for session environment secrets, the public `recipients.txt`, and `age-identity.bw-item` (the Bitwarden item ID holding the private identity); `.sops.yaml` holds the sops creation rule |
@@ -232,23 +232,22 @@ works on it. Client setup and the server side are documented in borrrk-infra
 `resources/services/obsidian-sync/`. Install the app per host: `pacman -S obsidian`, Obsidian.app
 on the Mac.
 
-- **Settings:** `obsidian/` holds `app.json`, `appearance.json`, `core-plugins.json` and
-  `community-plugins.json`, linked into the vault's `.obsidian/`. Obsidian writes these files in
-  place, so the links survive a settings change; a `replaced-link` in `--check` means a setting was
-  saved as a real file and needs to be copied back here. LiveSync's hidden-file and customization
-  sync stay off: the links are the only carrier of these settings, and the bridge skips
-  `.obsidian/` anyway. The iPad is set up by hand.
-- **Not carried:** `workspace.json` and `graph.json` (view state), plugin code (install from the
-  community browser) and LiveSync's `data.json` (sync credentials and per-device state; set up by
-  the LiveSync Setup URI).
-- **MCP:** `omp/mcp-all.json` (linked as `~/.omp/agent/.mcp.json` on every OMP host, the Mac
-  included) defines the `obsidian` server. `tools/obsidian-mcp` runs MCPVault on the hub copy on
-  atlas-agent, and over `ssh atlas-agent` from other hosts, so every host sees the same current notes
-  without Obsidian running. MCPVault runs with `--read-only`, so it exposes read tools only and
-  rejects mutations for every client: writes into the hub go through the agent's staged writer or
-  an Obsidian client. MCPVault refuses
-  `.obsidian/`; settings are read here. The SSH hop authenticates through the Bitwarden agent
-  socket that `shell/zshrc` exports, so start OMP from an interactive shell on hosts that use it.
+- **Device vault MCP:** the workstation and the Mac each run `tools/vault-mcp-serve`
+  (`obsidian/vault-mcp.service`, `obsidian/vault-mcp.plist`): one mcp-proxy on `127.0.0.1:8470`
+  serving `/servers/notes/mcp` (MCPVault, read-write; LiveSync carries edits to the other devices)
+  and `/servers/settings/mcp` (a filesystem server limited to the vault's `.obsidian/`, which
+  MCPVault refuses). The script publishes the port with `tailscale serve` as tailnet-only HTTPS, so
+  the Hermes agent and OMP on any host can read and fix a device's notes and settings. Nothing
+  checks the caller beyond tailnet reachability. Linux needs `sudo tailscale set --operator=$USER`
+  once. OMP reaches the servers as `<device>.${TS_DNS_SUFFIX}:8470` (`omp/mcp-all.json`; the
+  tailnet suffix is in `secrets/session.env`). The iPad runs no server and is set up by hand.
+- **Settings** are plain files in each device's `.obsidian/`, kept in step through the settings
+  servers rather than by this repository. LiveSync's hidden-file and customization sync stay off,
+  and the bridge skips `.obsidian/` in both directions.
+- **Hub copy:** the `obsidian` server (`tools/obsidian-mcp`) runs MCPVault `--read-only` on
+  atlas-agent's mirror, over `ssh atlas-agent` from other hosts. Writes into the mirror go through
+  the agent's staged writer. The SSH hop authenticates through the Bitwarden agent socket that
+  `shell/zshrc` exports, so start OMP from an interactive shell on hosts that use it.
 
 ## Notes
 
