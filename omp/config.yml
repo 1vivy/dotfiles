@@ -10,8 +10,8 @@ modelRoles:
   slow: anthropic/claude-fable-5-1:xhigh
   oracle: openai-codex/gpt-6-astra:high
   task: openai-codex/gpt-6.1-sol:medium
-  smol: omni/opencode-go/deepseek-v4.1-flash
-  tiny: openai-codex/gpt-6-luna:low
+  smol: openai-codex/gpt-6.1-terra
+  tiny: omni/opencode-go/mimo-v2.6-flash
   commit: omni/opencode-go/deepseek-v4.1-flash:low
   advisor: anthropic/claude-sonnet-5-5:high
   security: openai-codex/gpt-daybreak-blue-latest:high
@@ -34,6 +34,8 @@ searxng:
   endpoint: https://search.p0g.ca
 task:
   agentModelOverrides:
+    scout:
+      - openai-codex/gpt-6.1-terra:medium
     security-reviewer:
       - "@security"
       - "@oracle"
@@ -71,13 +73,11 @@ retry:
     task:
       - openai-codex/gpt-5.6-sol:medium
       - deepseek/deepseek-flash:high
-    smol:
-      - deepseek/deepseek-flash:auto
-      - openai-codex/gpt-6-luna:low
+    openai-codex/gpt-6.1-terra:
+      - omni/opencode-go/deepseek-v4.1-flash:low
       - anthropic/claude-sonnet-5:low
     tiny:
-      - deepseek/deepseek-flash:low
-      - anthropic/claude-sonnet-5:low
+      - omni/openrouter/mistralai/mistral-nemo
     commit:
       - deepseek/deepseek-flash:low
       - openai-codex/gpt-6-luna:low
