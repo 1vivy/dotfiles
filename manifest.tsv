@@ -44,3 +44,5 @@ link	terminal/ghostty/config	~/.config/ghostty/config	workstation,mac
 link	terminal/ghostty/config.ghostty	~/.config/ghostty/config.ghostty	workstation,mac
 # Herdr: a headless server per host, so panes and agents outlive the client and Collie always finds it
 link	herdr/herdr.service	~/.config/systemd/user/herdr.service	workstation,atlas-agent
+# Collie member binds its tailnet address: wait for tailscaled before starting (lead binds loopback)
+link	herdr/collie-wait-tailscale.conf	~/.config/systemd/user/collie.service.d/wait-tailscale.conf	workstation

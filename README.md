@@ -205,13 +205,18 @@ keys, host verification, or those generated aliases. Neither WezTerm's native SS
 Herdr keeps panes and agents alive in a per-host server; `herdr/herdr.service` runs it as a user unit
 on the workstation and atlas-agent (`systemctl --user enable --now herdr`; atlas-agent needs
 `loginctl enable-linger`). ColliePWA shows those panes on the phone. Both are installed by their own
-scripts into `~/.local/bin` and `~/.local/share/collie`; the installer here manages only the unit.
+scripts into `~/.local/bin` and `~/.local/share/collie`; the installer here manages the Herdr unit
+and one drop-in for Collie's own `collie.service`.
 
 - **Lead:** atlas-agent. `~/.config/collie/.env` (mode 0600, never committed) sets `COLLIE_MUX=herdr`,
   `COLLIE_SERVE_PORT=8443` and `COLLIE_TRUSTED_USER`. Port 443 on that host belongs to another
   service, so Collie takes 8443. The phone opens `https://atlas-agent.<tailnet>.ts.net:8443`.
 - **Member:** the workstation, with `COLLIE_SKIP_SERVE=1` and `COLLIE_HOST` set to its tailnet
-  address, because the lead dials it over Collie's own mutual-TLS link.
+  address, because the lead dials it over Collie's own mutual-TLS link. That address appears only
+  after tailscaled connects; started earlier, the bridge logs `EADDRNOTAVAIL`, stays up without a
+  listener and is never restarted. `herdr/collie-wait-tailscale.conf` (linked as a
+  `collie.service.d` drop-in) holds the start until the address exists. Symptom without it: the
+  lead's `collie doctor` fails `member-reach` while the member's own doctor passes `lead-reach`.
 - Enroll with `collie crew invite` on the lead, then pipe the token to
   `collie crew join <lead>:8443 - --address <member-tailnet-ip>:8787` on the member, so it never
   sits in `ps` output. Pair the phone with `collie qr` and `collie pair` on the lead.
