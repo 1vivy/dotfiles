@@ -122,10 +122,10 @@ check rather than promising identical desktop and phone layouts.
 
 - Keep clipboard reads subject to confirmation. Do not grant remote applications
   unrestricted access to desktop clipboard contents.
-- Current tmux uses `set-clipboard external`: tmux copies can emit OSC 52, but
-  application-originated clipboard writes are not generally enabled by that
-  setting. Test OMP/editor copy actions separately; do not claim tmux copy proves
-  that those actions work. Any permission change must be explicit.
+- tmux uses `set-clipboard on` (owner decision, 2026-10-27, replacing `external`):
+  application-originated OSC 52 writes reach the terminal, so a pane program can
+  overwrite the clipboard but not read it. Test OMP/editor copy actions on each
+  client; a tmux copy does not prove they work.
 - Kitty supports richer keyboard and graphics protocols than tmux transparently
   forwards. Preserve direct-terminal access for features requiring those protocols.
 - Do not enable unrestricted passthrough to make a capability probe appear to
