@@ -49,12 +49,8 @@ link	terminal/ghostty/config.ghostty	~/.config/ghostty/config.ghostty	workstatio
 link	herdr/herdr.service	~/.config/systemd/user/herdr.service	workstation,atlas-agent
 # Collie member binds its tailnet address: wait for tailscaled before starting (lead binds loopback)
 link	herdr/collie-wait-tailscale.conf	~/.config/systemd/user/collie.service.d/wait-tailscale.conf	workstation
-# Obsidian: shared settings of the LiveSync University vault (vault path differs per host)
-link	obsidian/app.json	~/Documents/University/University/.obsidian/app.json	workstation
-link	obsidian/appearance.json	~/Documents/University/University/.obsidian/appearance.json	workstation
-link	obsidian/core-plugins.json	~/Documents/University/University/.obsidian/core-plugins.json	workstation
-link	obsidian/community-plugins.json	~/Documents/University/University/.obsidian/community-plugins.json	workstation
-link	obsidian/app.json	~/Documents/Obsidian/University/.obsidian/app.json	mac
-link	obsidian/appearance.json	~/Documents/Obsidian/University/.obsidian/appearance.json	mac
-link	obsidian/core-plugins.json	~/Documents/Obsidian/University/.obsidian/core-plugins.json	mac
-link	obsidian/community-plugins.json	~/Documents/Obsidian/University/.obsidian/community-plugins.json	mac
+# Obsidian: shared settings of the LiveSync University vault, same vault path on every client host
+link	obsidian/app.json	~/Documents/Obsidian/University/.obsidian/app.json	workstation,mac
+link	obsidian/appearance.json	~/Documents/Obsidian/University/.obsidian/appearance.json	workstation,mac
+link	obsidian/core-plugins.json	~/Documents/Obsidian/University/.obsidian/core-plugins.json	workstation,mac
+link	obsidian/community-plugins.json	~/Documents/Obsidian/University/.obsidian/community-plugins.json	workstation,mac

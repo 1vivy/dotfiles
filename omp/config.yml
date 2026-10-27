@@ -112,7 +112,7 @@ hindsight:
 tools:
   approvalMode: yolo
   approval:
-    # obsidian MCP (omp/mcp-all.json) reads the hub vault only; writes go through vault_write.py
+    # obsidian MCP (omp/mcp-all.json) reads the hub vault only; writes go through the agent's writer
     mcp__obsidian_write_note: deny
     mcp__obsidian_patch_note: deny
     mcp__obsidian_delete_note: deny

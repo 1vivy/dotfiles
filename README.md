@@ -225,28 +225,28 @@ and one drop-in for Collie's own `collie.service`.
 
 ## Obsidian
 
-The University vault syncs through Self-hosted LiveSync (CouchDB `vault-sync.p0g.ca`) to the
-workstation, the Mac and the iPad. A bridge in borrrk-infra (`obsidian-sync`) mirrors it to plain
-files that atlas-agent mounts at `~/University/vault`; Haerin and DeepTutor work on that copy. Client
-setup and the server side are documented in borrrk-infra `resources/services/obsidian-sync/`
-(`vault-seed/_system/devices.md`). Install the app per host: `pacman -S obsidian`, Obsidian.app on
-the Mac.
+The University vault lives at `~/Documents/Obsidian/University` on the workstation and the Mac and
+syncs through Self-hosted LiveSync to them and the iPad. A bridge in borrrk-infra (`obsidian-sync`)
+mirrors it to plain files that atlas-agent mounts at `~/University/vault`, where the Hermes agent
+works on it. Client setup and the server side are documented in borrrk-infra
+`resources/services/obsidian-sync/`. Install the app per host: `pacman -S obsidian`, Obsidian.app
+on the Mac.
 
 - **Settings:** `obsidian/` holds `app.json`, `appearance.json`, `core-plugins.json` and
-  `community-plugins.json`, linked into the vault's `.obsidian/` (paths differ per host, see
-  `manifest.tsv`). Obsidian writes these files in place, so the links survive a settings change; a
-  `replaced-link` in `--check` means a setting was saved as a real file and needs to be copied back
-  here. LiveSync's hidden-file and customization sync stay off: the links are the only carrier of
-  these settings, and the bridge skips `.obsidian/` anyway. The iPad is set up by hand.
+  `community-plugins.json`, linked into the vault's `.obsidian/`. Obsidian writes these files in
+  place, so the links survive a settings change; a `replaced-link` in `--check` means a setting was
+  saved as a real file and needs to be copied back here. LiveSync's hidden-file and customization
+  sync stay off: the links are the only carrier of these settings, and the bridge skips
+  `.obsidian/` anyway. The iPad is set up by hand.
 - **Not carried:** `workspace.json` and `graph.json` (view state), plugin code (install from the
-  community browser) and LiveSync's `data.json` (CouchDB credentials and per-device state; set up by
-  the Setup URI per `devices.md`).
+  community browser) and LiveSync's `data.json` (sync credentials and per-device state; set up by
+  the LiveSync Setup URI).
 - **MCP:** `omp/mcp-all.json` (linked as `~/.omp/agent/.mcp.json` on every OMP host, the Mac
   included) defines the `obsidian` server. `tools/obsidian-mcp` runs MCPVault on the hub copy on
   atlas-agent, and over `ssh atlas-agent` from other hosts, so every host sees the same current notes
   without Obsidian running. Its write tools are denied in `omp/config.yml` (`tools.approval`, which
   holds in every approval mode and in subagents; OMP's MCP config has no tool filter): writes into
-  the hub go through Haerin's `vault_write.py` or an Obsidian client. MCPVault refuses
+  the hub go through the agent's staged writer or an Obsidian client. MCPVault refuses
   `.obsidian/`; settings are read here.
 
 ## Notes
