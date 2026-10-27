@@ -17,12 +17,12 @@ the user-level files that live in the homes.
 | `agents/AGENTS.md` | Global working agreements; linked to `~/.agents/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` |
 | `agents/RULES.md` | OMP sticky rules (always applied, also inside task subagents, which do not receive `AGENTS.md`); linked to `~/.omp/agent/RULES.md` |
 | `agents/skills/<name>/` | Shared skills for OMP, Claude, and Codex, installed through directory or per-skill links |
-| `omp/` | OMP user config (`config.yml`, `models.yml`, `mcp.json`, `lsp.yaml`, `SYSTEM_TEMPLATE.md`) |
+| `omp/` | OMP user config (`config.yml`, `models.yml`, `mcp.json`, `mcp-all.json`, `lsp.yaml`, `SYSTEM_TEMPLATE.md`) |
 | `omp/prompts/` | `SYSTEM_TEMPLATE.md` builder, vendored upstream prompts and the post-upgrade `reconcile-omp.py` run by `omp-reconcile` / `omp update`. Never installed |
 | `omp/ROLES.md`, `omp/omo-model-criteria.md` | Documentation only — role catalogue and model-selection criteria. Never installed |
 | `shell/`, `git/`, `ssh/config.d/`, `terminal/`, `tools/` | Shell, git, ssh, terminal emulator and small tool configs |
 | `xerahs/` | XerahS launcher (capture actions bound by KDE shortcuts) and its `app-xerahs.service` tray unit; workstation only. Uploader configs hold the Zipline token and are never committed |
-| `obsidian/PLAN.md` | Pending Obsidian adoption plan; nothing installed yet |
+| `obsidian/` | Shared settings of the University vault, linked into its `.obsidian/` on the workstation and Mac |
 | `manifest.tsv` | The install manifest: `mode, repo_path, target, profiles` |
 | `install.sh` | Adopter |
 | `secrets/`, `.sops.yaml` | age ciphertext (`*.age`), the sops dotenv `session.env` for session environment secrets, the public `recipients.txt`, and `age-identity.bw-item` (the Bitwarden item ID holding the private identity); `.sops.yaml` holds the sops creation rule |
@@ -222,6 +222,30 @@ and one drop-in for Collie's own `collie.service`.
   sits in `ps` output. Pair the phone with `collie qr` and `collie pair` on the lead.
 - `tailscale serve` needs root or `tailscale set --operator=$USER`; without it Collie logs
   `Access denied` on every start and `collie doctor` reports `front-door`.
+
+## Obsidian
+
+The University vault syncs through Self-hosted LiveSync (CouchDB `vault-sync.p0g.ca`) to the
+workstation, the Mac and the iPad. A bridge in borrrk-infra (`obsidian-sync`) mirrors it to plain
+files that atlas-agent mounts at `~/University/vault`; Haerin and DeepTutor work on that copy. Client
+setup and the server side are documented in borrrk-infra `resources/services/obsidian-sync/`
+(`vault-seed/_system/devices.md`). Install the app per host: `pacman -S obsidian`, Obsidian.app on
+the Mac.
+
+- **Settings:** `obsidian/` holds `app.json`, `appearance.json`, `core-plugins.json` and
+  `community-plugins.json`, linked into the vault's `.obsidian/` (paths differ per host, see
+  `manifest.tsv`). Obsidian writes these files in place, so the links survive a settings change; a
+  `replaced-link` in `--check` means a setting was saved as a real file and needs to be copied back
+  here. LiveSync's hidden-file and customization sync stay off: the links are the only carrier of
+  these settings, and the bridge skips `.obsidian/` anyway. The iPad is set up by hand.
+- **Not carried:** `workspace.json` and `graph.json` (view state), plugin code (install from the
+  community browser) and LiveSync's `data.json` (CouchDB credentials and per-device state; set up by
+  the Setup URI per `devices.md`).
+- **MCP:** `omp/mcp-all.json` (linked as `~/.omp/agent/.mcp.json` on every OMP host, the Mac
+  included) defines the `obsidian` server. `tools/obsidian-mcp` runs MCPVault on the hub copy on
+  atlas-agent, and over `ssh atlas-agent` from other hosts, so every host sees the same current notes
+  without Obsidian running. Only read tools are enabled: writes into the hub go through Haerin's
+  `vault_write.py` or an Obsidian client. MCPVault refuses `.obsidian/`; settings are read here.
 
 ## Notes
 

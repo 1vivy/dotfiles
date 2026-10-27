@@ -20,6 +20,9 @@ link	omp/models.yml	~/.omp/agent/models.yml	workstation,atlas-agent,mac
 link	omp/mcp.json	~/.omp/agent/mcp.json	workstation,atlas-agent
 link	omp/lsp.yaml	~/.omp/agent/lsp.yaml	workstation,atlas-agent,mac
 link	omp/SYSTEM_TEMPLATE.md	~/.omp/agent/SYSTEM_TEMPLATE.md	workstation,atlas-agent,mac
+# MCP servers every OMP host runs (mcp.json above holds the workstation/atlas-agent-only ones)
+link	omp/mcp-all.json	~/.omp/agent/.mcp.json	workstation,atlas-agent,mac
+link	tools/obsidian-mcp	~/.local/bin/obsidian-mcp	workstation,atlas-agent,mac
 gpg	secrets/gpg-agent-signing.asc.age	~/.gnupg	workstation,atlas-agent,mac
 link	shell/zshrc	~/.zshrc	all
 link	shell/zshenv	~/.zshenv	all
@@ -46,3 +49,12 @@ link	terminal/ghostty/config.ghostty	~/.config/ghostty/config.ghostty	workstatio
 link	herdr/herdr.service	~/.config/systemd/user/herdr.service	workstation,atlas-agent
 # Collie member binds its tailnet address: wait for tailscaled before starting (lead binds loopback)
 link	herdr/collie-wait-tailscale.conf	~/.config/systemd/user/collie.service.d/wait-tailscale.conf	workstation
+# Obsidian: shared settings of the LiveSync University vault (vault path differs per host)
+link	obsidian/app.json	~/Documents/University/University/.obsidian/app.json	workstation
+link	obsidian/appearance.json	~/Documents/University/University/.obsidian/appearance.json	workstation
+link	obsidian/core-plugins.json	~/Documents/University/University/.obsidian/core-plugins.json	workstation
+link	obsidian/community-plugins.json	~/Documents/University/University/.obsidian/community-plugins.json	workstation
+link	obsidian/app.json	~/Documents/Obsidian/University/.obsidian/app.json	mac
+link	obsidian/appearance.json	~/Documents/Obsidian/University/.obsidian/appearance.json	mac
+link	obsidian/core-plugins.json	~/Documents/Obsidian/University/.obsidian/core-plugins.json	mac
+link	obsidian/community-plugins.json	~/Documents/Obsidian/University/.obsidian/community-plugins.json	mac

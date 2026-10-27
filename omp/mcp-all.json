@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "obsidian": {
+      "type": "stdio",
+      "command": "${HOME}/.local/bin/obsidian-mcp",
+      "enabled": true,
+      "startupTimeoutMs": 90000,
+      "requestTimeoutMs": 60000,
+      "includeTools": [
+        "read_note",
+        "read_multiple_notes",
+        "read_note_lines",
+        "get_note_outline",
+        "get_frontmatter",
+        "get_notes_info",
+        "list_directory",
+        "search_notes",
+        "list_all_tags",
+        "wiki_link",
+        "get_vault_stats"
+      ]
+    }
+  }
+}
