@@ -7,6 +7,26 @@
       "enabled": true,
       "startupTimeoutMs": 90000,
       "requestTimeoutMs": 60000
+    },
+    "workstation-vault-notes": {
+      "type": "http",
+      "url": "https://cachyos-x8664.${TS_DNS_SUFFIX}:8470/servers/notes/mcp",
+      "enabled": true
+    },
+    "workstation-vault-settings": {
+      "type": "http",
+      "url": "https://cachyos-x8664.${TS_DNS_SUFFIX}:8470/servers/settings/mcp",
+      "enabled": true
+    },
+    "mac-vault-notes": {
+      "type": "http",
+      "url": "https://vivys-macbook-air.${TS_DNS_SUFFIX}:8470/servers/notes/mcp",
+      "enabled": true
+    },
+    "mac-vault-settings": {
+      "type": "http",
+      "url": "https://vivys-macbook-air.${TS_DNS_SUFFIX}:8470/servers/settings/mcp",
+      "enabled": true
     }
   }
 }

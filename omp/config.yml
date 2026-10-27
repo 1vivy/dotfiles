@@ -25,7 +25,6 @@ modelProviderOrder:
   - openai-codex
   - anthropic
   - omni
-  - deepseek
 providers:
   autoThinkingMaxEffort: max
   webSearchOrder:

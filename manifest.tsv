@@ -49,8 +49,7 @@ link	terminal/ghostty/config.ghostty	~/.config/ghostty/config.ghostty	workstatio
 link	herdr/herdr.service	~/.config/systemd/user/herdr.service	workstation,atlas-agent
 # Collie member binds its tailnet address: wait for tailscaled before starting (lead binds loopback)
 link	herdr/collie-wait-tailscale.conf	~/.config/systemd/user/collie.service.d/wait-tailscale.conf	workstation
-# Obsidian: shared settings of the LiveSync University vault, same vault path on every client host
-link	obsidian/app.json	~/Documents/Obsidian/University/.obsidian/app.json	workstation,mac
-link	obsidian/appearance.json	~/Documents/Obsidian/University/.obsidian/appearance.json	workstation,mac
-link	obsidian/core-plugins.json	~/Documents/Obsidian/University/.obsidian/core-plugins.json	workstation,mac
-link	obsidian/community-plugins.json	~/Documents/Obsidian/University/.obsidian/community-plugins.json	workstation,mac
+# Obsidian: this device's vault served as MCP on the tailnet (notes + .obsidian settings)
+link	tools/vault-mcp-serve	~/.local/bin/vault-mcp-serve	workstation,mac
+link	obsidian/vault-mcp.service	~/.config/systemd/user/vault-mcp.service	workstation
+seed	obsidian/vault-mcp.plist	~/Library/LaunchAgents/local.vault-mcp.plist	mac
