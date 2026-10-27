@@ -5,7 +5,7 @@ Each host uses one clone.
 Install the selected profile with `./install.sh`.
 
 This repository holds the harness dotfiles the owner actually runs: agent context files, skills,
-OMP config, Claude/Codex/Paseo config, shell, git, ssh, terminal and small tool configs. It is not a
+OMP config, Claude/Codex config, shell, git, ssh, terminal and small tool configs. It is not a
 Nix or system-configuration repo — hosts are built from `1vivy/borrrk-infra`; this repo only fills in
 the user-level files that live in the homes.
 
@@ -20,7 +20,6 @@ the user-level files that live in the homes.
 | `omp/` | OMP user config (`config.yml`, `models.yml`, `mcp.json`, `lsp.yaml`, `SYSTEM_TEMPLATE.md`) |
 | `omp/prompts/` | `SYSTEM_TEMPLATE.md` builder, vendored upstream prompts and the post-upgrade `reconcile-omp.py` run by `omp-reconcile` / `omp update`. Never installed |
 | `omp/ROLES.md`, `omp/omo-model-criteria.md` | Documentation only — role catalogue and model-selection criteria. Never installed |
-| `paseo/config.json` | Seed (see below) |
 | `shell/`, `git/`, `ssh/config.d/`, `terminal/`, `tools/` | Shell, git, ssh, terminal emulator and small tool configs |
 | `xerahs/` | XerahS launcher (capture actions bound by KDE shortcuts) and its `app-xerahs.service` tray unit; workstation only. Uploader configs hold the Zipline token and are never committed |
 | `manifest.tsv` | The install manifest: `mode, repo_path, target, profiles` |
@@ -37,7 +36,7 @@ the user-level files that live in the homes.
   directory already sitting at the target is moved into the backup directory first when its content
   differs; when it is byte-identical it is simply replaced by the link.
 - **seed** — the repo file is copied into place **only when the target does not exist**. Seeds are
-  starting points for tools that own and rewrite their own config (Paseo); once
+  starting points for tools that own and rewrite their own config (XerahS); once
   seeded, the live file is authoritative and the repo copy is not pushed over it. `--check` reports
   divergence as `seed-drift` so it is visible, never silently overwritten.
 - **decrypt** — the repo holds an age-encrypted file under `secrets/`; `install.sh` decrypts it to the
@@ -66,10 +65,10 @@ Repository instructions retain the project's commands, conventions, and acceptan
 `./install.sh --profile <name>` installs only the entries whose `profiles` column names that profile
 (or `all`):
 
-- **workstation** — the owner's CachyOS desktop: everything, including OMP config, terminal emulators
-  and the Paseo seed.
+- **workstation** — the owner's CachyOS desktop: everything, including OMP config and terminal
+  emulators.
 - **atlas-agent** — the NixOS agent host: agent context, skills, OMP config, shell/git/ssh/tools and
-  tmux. No terminal-emulator config, no Paseo.
+  tmux. No terminal-emulator config.
 - **mac** — owner harness, shell/git/tools, tmux, WezTerm/Ghostty and macOS XerahS seeds.
   Fleet SSH configuration is rendered by `borrrk-infra`, not copied from Linux.
 
@@ -137,7 +136,6 @@ Secret values and secret-bearing state stay out of this repository in plaintext,
 - `~/.netrc`, `~/.config/gh/hosts.yml`, `~/.vault-token`
 - `~/.claude.json`, `~/.codex/auth.json`, any `auth.json` or `.env`
 - `~/.hindsight/secrets`, `~/.config/borrrk/openbao-agent.json`
-- `~/.paseo/daemon-keypair.json`, `~/.paseo/push-tokens.json`, `~/.paseo/local-credential`
 - SSH private keys, `known_hosts`, agent sockets
 - session/history/stats databases (`agent.db`, `history.db`, `models.db`, `logs_*.sqlite`, …), caches,
   blobs and shell snapshots
