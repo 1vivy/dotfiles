@@ -180,9 +180,11 @@ Run `./install.sh --profile mac` on the Mac, `--profile workstation` on the desk
   Shift+Enter and Alt+Backspace mappings are retained. This is not full Kitty keyboard-protocol
   or graphics passthrough support; use a direct terminal session for features requiring those.
 - Copies use OSC 52 through the attached client, so no remote `xclip`/`pbcopy` is needed.
-  The client must permit clipboard writes; enable that in Termius if required. Applications inside
-  tmux cannot directly set tmux's clipboard (`set-clipboard external`). No unrestricted passthrough
-  or plugin manager is enabled.
+  The client must permit clipboard writes; enable that in Termius if required. tmux runs
+  `set-clipboard on`, so applications inside it (OMP, editors) can also write the clipboard;
+  they cannot read it. `set-titles on` hands `host: session:window` to the outer terminal.
+  `update-environment` follows the attaching client's `TERM_PROGRAM`, `COLORTERM` and
+  `KITTY_WINDOW_ID`. No unrestricted passthrough or plugin manager is enabled.
 - Ghostty's SSH shell integration installs its terminfo remotely when possible and falls back to
   `xterm-256color` when installation fails. Standard Termius/iTerm2 `xterm-256color` also works.
   Do not globally export TERM in shell startup files. For an unfamiliar client reporting an unknown
@@ -198,6 +200,24 @@ Fleet aliases and authentication remain owned by `borrrk-infra/scripts/borrrk do
 SSH setup already uses keepalives and disables agent forwarding; terminal setup does not replace
 keys, host verification, or those generated aliases. Neither WezTerm's native SSH mode nor iTerm2's
 `tmux -CC` control mode is required for normal SSH/tmux operation.
+
+## Herdr and Collie (phone access)
+
+Herdr keeps panes and agents alive in a per-host server; `herdr/herdr.service` runs it as a user unit
+on the workstation and atlas-agent (`systemctl --user enable --now herdr`; atlas-agent needs
+`loginctl enable-linger`). ColliePWA shows those panes on the phone. Both are installed by their own
+scripts into `~/.local/bin` and `~/.local/share/collie`; the installer here manages only the unit.
+
+- **Lead:** atlas-agent. `~/.config/collie/.env` (mode 0600, never committed) sets `COLLIE_MUX=herdr`,
+  `COLLIE_SERVE_PORT=8443` and `COLLIE_TRUSTED_USER`. Port 443 on that host belongs to another
+  service, so Collie takes 8443. The phone opens `https://atlas-agent.<tailnet>.ts.net:8443`.
+- **Member:** the workstation, with `COLLIE_SKIP_SERVE=1` and `COLLIE_HOST` set to its tailnet
+  address, because the lead dials it over Collie's own mutual-TLS link.
+- Enroll with `collie crew invite` on the lead, then pipe the token to
+  `collie crew join <lead>:8443 - --address <member-tailnet-ip>:8787` on the member, so it never
+  sits in `ps` output. Pair the phone with `collie qr` and `collie pair` on the lead.
+- `tailscale serve` needs root or `tailscale set --operator=$USER`; without it Collie logs
+  `Access denied` on every start and `collie doctor` reports `front-door`.
 
 ## Notes
 

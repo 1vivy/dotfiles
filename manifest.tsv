@@ -43,3 +43,5 @@ link	terminal/tmux.conf	~/.tmux.conf	all
 link	terminal/wezterm.lua	~/.wezterm.lua	workstation,mac
 link	terminal/ghostty/config	~/.config/ghostty/config	workstation,mac
 link	terminal/ghostty/config.ghostty	~/.config/ghostty/config.ghostty	workstation,mac
+# Herdr: a headless server per host, so panes and agents outlive the client and Collie always finds it
+link	herdr/herdr.service	~/.config/systemd/user/herdr.service	workstation,atlas-agent
