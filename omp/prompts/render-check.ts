@@ -83,11 +83,9 @@ const cases: Record<string, Record<string, unknown>> = {
 };
 // OMP >= 18.5.0 renders `model` as "provider/id:<effort>"; bare ids cover an unset level.
 const models = [
-	"omni/opencode-go/deepseek-v4.1-flash",
-	"omni/opencode-go/deepseek-v4.1-flash:high",
-	"omni/opencode-go/deepseek-v4.1-flash:off",
-	"deepseek/deepseek-flash",
-	"deepseek/deepseek-flash:max",
+	"omni/omp/deepseek-v4.1-flash",
+	"omni/omp/deepseek-v4.1-flash:high",
+	"omni/omp/deepseek-v4.1-flash:off",
 	"openai-codex/gpt-5.6-sol:high",
 	"anthropic/claude-opus-5-5:high",
 	"",

@@ -17,8 +17,8 @@ REPO = HERE.parent.parent
 TEMPLATE = HERE.parent / "SYSTEM_TEMPLATE.md"
 CANDIDATE = Path("/tmp/SYSTEM_TEMPLATE.new.md")
 SMOKE = {
-    "omni/opencode-go/deepseek-v4.1-flash": "You are DeepSeek V4.1 Flash",
-    "omni/opencode-go/deepseek-v4.1-flash:low": "You are DeepSeek V4.1 Flash",
+    "omni/omp/deepseek-v4.1-flash": "You are DeepSeek V4.1 Flash",
+    "omni/omp/deepseek-v4.1-flash:low": "You are DeepSeek V4.1 Flash",
     "openai-codex/gpt-5.6-sol": "RFC 2119 keywords",
 }
 
