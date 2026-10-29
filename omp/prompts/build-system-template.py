@@ -25,7 +25,7 @@ TARGET = HERE.parent / "SYSTEM_TEMPLATE.md"
 UPSTREAM_URL = "https://raw.githubusercontent.com/can1357/oh-my-pi/v{version}/packages/coding-agent/src/prompts/system/system-prompt.md"
 # Exact `model` values OMP renders are "provider/id" plus ":<effort>" since omp 18.5.0
 # (`formatModelSelectorValue`; bare when the level is unset). includeModelInPrompt must stay true.
-DEEPSEEK_MODELS = ("omni/omp/deepseek-v4.1-flash",)
+DEEPSEEK_MODELS = ("omni/omp/deepseek-v4.1-flash", "omni/deepseek/deepseek-flash")
 # pi-agent `ThinkingLevel` minus `inherit`, which formatModelSelectorValue never appends.
 EFFORT_SUFFIXES = ("", ":off", ":minimal", ":low", ":medium", ":high", ":xhigh", ":max")
 MODEL_VALUES = tuple(model + suffix for model in DEEPSEEK_MODELS for suffix in EFFORT_SUFFIXES)

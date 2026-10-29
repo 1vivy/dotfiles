@@ -86,6 +86,7 @@ const models = [
 	"omni/omp/deepseek-v4.1-flash",
 	"omni/omp/deepseek-v4.1-flash:high",
 	"omni/omp/deepseek-v4.1-flash:off",
+	"omni/deepseek/deepseek-flash:high",
 	"openai-codex/gpt-5.6-sol:high",
 	"anthropic/claude-opus-5-5:high",
 	"",

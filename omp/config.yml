@@ -79,6 +79,7 @@ retry:
       - omni/omp/deepseek-v4.1-flash:low
       - anthropic/claude-sonnet-5:low
     omni/omp/deepseek-v4.1-flash:
+      - omni/deepseek/deepseek-flash
       - openai-codex/gpt-6-luna
       - anthropic/claude-sonnet-5
     sonic:

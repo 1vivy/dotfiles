@@ -14,7 +14,7 @@ Git history here is the record of how seats moved.
 | `task` | gpt-6.1-sol:medium | Bundled `task` agent's planning seat. OMO deep-low leads with 6.1 Sol at medium (#9214): GPT-6 Sol's price, DeepSWE 75.2% at high vs GPT-6 Sol's 68.8% at max. `task.agentPrewalk.task` hands execution to `omni/omp/deepseek-v4.1-flash:high` at the first eligible edit/write. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, the Ctrl-cycle slot, and the fallback target of any `@smol` pattern. Moved off DeepSeek on 2026-10-27: Artificial Analysis puts Terra medium at TB4 32.3% in 209 s and 19K output tokens per task against DeepSeek V4.1 Flash 1017's 33.8% in 956 s and 218K. Pricing is $1/$5 per M, about 10x Haiku 5.5 and half Sonnet 5.5; Haiku 5.5 and DeepSeek Flash are the usual community picks for `smol` (omp docs example, standardcompute, james-carr.org). No suffix, so each agent keeps its own effort. Fallbacks (keyed on the exact model, so they cover the scout pin too): omp/deepseek-v4.1-flash low → Sonnet 5 low. Spell the combo id out; `deepseek/deepseek-flash:auto` resolved to an OpenRouter `~latest` route on atlas-agent without the DeepSeek prompt block. |
 | `sonic` | gpt-6-luna (no effort suffix; the bundled `sonic` agent configures medium) | OMP's bundled weak worker (`vibe_spawn` `fast`), pinned through `task.agentModelOverrides.sonic: "@sonic"`. Added 2026-10-29 after Luna carried DeepSeek's execution lanes acceptably: 27 Oct–29 Oct, 58 of 163 DeepSeek sessions fell back to Luna and ran 6,759 assistant turns there. OMO's `quick` and explore lanes also lead with Luna. → omp/deepseek-v4.1-flash (inherits effort). |
-| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → gpt-6-luna → sonnet-5, both inheriting `low`. |
+| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → DeepSeek direct → gpt-6-luna → sonnet-5, all inheriting `low`. |
 | `tiny` | omni/opencode-go/mimo-v2.6-flash | Session titles; `memory` follows it, but the backend is Hindsight. Chosen 2026-10-27 from opencode.ai/docs/go: $0.14/$0.28 per M, its own $60/mo bucket and 30,100 requests per 5 h on the $10 plan, no training, 0-day retention. A smoke title was good. Only fallback: `omni/openrouter/mistralai/mistral-nemo` ($0.029/$0.03 per M on OpenRouter's list). Left Codex (was gpt-6-luna:low). |
 | `advisor` | claude-sonnet-5-5:high | Invoked manually by the owner. High matches Opus 5.5 medium on real-project coding scores at lower quota burn. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `security` | gpt-daybreak-blue-latest:high | `security-reviewer`; Codex-only chain (Anthropic cyber refusals on RE work): → gpt-6-astra:high → gpt-6.1-sol:high → gpt-5.6-sol:high. Also usable for a manual main session after Anthropic refusals. 6.1 Sol's internal ExploitBench port is 21.5% vs 5.6 Sol's 3.5%. |
@@ -24,15 +24,23 @@ Git history here is the record of how seats moved.
 Agent pins (`task.agentModelOverrides`): `scout` → gpt-6.1-terra:medium (2026-10-27: the pin sets the effort that `smol` leaves open; 78 scouts on DeepSeek low had a median wall time of 747 s, 30 turns and 29K output tokens); `reviewer` → claude-opus-5-5 → gpt-6-astra:xhigh until
 the Claude 5x switch on Oct 8, then `@oracle`. `security-reviewer` → `@security` → `@oracle`.
 
-DeepSeek fallback (`retry.fallbackChains["omni/omp/deepseek-v4.1-flash"]`): gpt-6-luna → sonnet-5, both
-bare so they inherit the failing turn's effort. The exact-model key outranks role chains, so one chain
-covers prewalked `task` execution (high), `commit` (low) and every DeepSeek hop in other chains. Before
-2026-10-29 the prewalk target owned no chain and borrowed `commit`'s (`gpt-6-luna:low`), so execution
-lanes dropped from high to low effort. The trigger is a mid-stream `terminated` from OmniRoute (HTTP 502,
-usually 10–60 s into a thinking stream): per OmniRoute call logs (27 Oct 18:38 – 29 Oct 17:00 UTC), OpenCode Go
-account `main-3` terminated 51 of 6,173 streams (0.83%) against `main`'s 2 of 6,516 (0.03%).
-`main-3` is a separate account pinned to egress member `pool-egr1`; `main` and `main-2` share one
-account and stay direct. OmniRoute cannot fall back once bytes are streamed, so OMP walks this chain.
+DeepSeek fallback (`retry.fallbackChains["omni/omp/deepseek-v4.1-flash"]`): `omni/deepseek/deepseek-flash`
+(DeepSeek direct through OmniRoute, the combo's own second step, under the Dotfiles key's 5M-token daily
+cap) → gpt-6-luna → sonnet-5. All bare, so they inherit the failing turn's effort. The exact-model key
+outranks role chains, so one chain covers prewalked `task` execution (high), `commit` (low) and every
+DeepSeek hop in other chains. Before 2026-10-29 the prewalk target owned no chain and borrowed `commit`'s
+(`gpt-6-luna:low`), so execution lanes skipped DeepSeek direct and dropped from high to low effort.
+`DEEPSEEK_MODELS` includes the direct id, so the fallback keeps the DeepSeek block 0.
+
+Why OMP must own this hop: the trigger is a mid-stream `terminated` (OmniRoute logs HTTP 502, usually
+10–60 s into the reasoning stream). OmniRoute 3.8.52 cannot move a committed stream to the next combo
+step; its opt-in mid-stream continuation reuses the same account and refuses a cut that has already
+emitted reasoning with no text (`streamRecovery.ts` `canContinue`/`canResendUnrendered`). Call logs
+27 Oct 18:38 – 29 Oct 17:00 UTC: OpenCode Go `main-3` dropped 1 stream per 20 stream-minutes (59 of
+6,843), `main` 1 per 475 (2 of 6,653). `main-3` is a separate account pinned to egress `pool-egr1`;
+`main` and `main-2` are one account in two workspaces and stay direct. A 2026-10-29 probe from
+atlas-apps2 held 12 rate-limited 293 s downloads through `pool-egr1` and 12 direct with no drop on
+either path (≈2.9 drops expected at `main-3`'s rate), which points away from the SOCKS path itself.
 
 The `omni` provider comes from the `omniroute-agent-extension` plugin (`omp plugin install
 omniroute-agent-extension@3.2.3` per host). It takes `OMNIROUTE_URL`, `OMNIROUTE_API_KEY` and
