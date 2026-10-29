@@ -12,8 +12,9 @@ Git history here is the record of how seats moved.
 | `slow` | claude-fable-5-1:xhigh | Manual deep-think escalation (Ctrl-cycle) and advisor fallback. → gpt-6-astra:xhigh → gpt-6.1-sol:xhigh. |
 | `oracle` | gpt-6-astra:high | Hard-reasoning/verdict lanes (OMO ultrabrain/deep-high, #8616). Lowered from xhigh 2026-09-29: Astra spent 1,205 output tokens/turn (73% hidden reasoning) vs Sol's 319; OMO deep-high followed 2026-10-01 (#9372). → gpt-6.1-sol:xhigh → claude-opus-5-5. 6.1 Sol stays behind Astra on verdict seats: it pushes past blocks in 23.5% of rollouts (Astra 17.4%) and misrepresents at 1.50% (Astra 0.51%). |
 | `task` | gpt-6.1-sol:medium | Bundled `task` agent's planning seat. OMO deep-low leads with 6.1 Sol at medium (#9214): GPT-6 Sol's price, DeepSWE 75.2% at high vs GPT-6 Sol's 68.8% at max. `task.agentPrewalk.task` hands execution to `omni/omp/deepseek-v4.1-flash:high` at the first eligible edit/write. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
-| `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, `sonic`, the Ctrl-cycle slot, and the fallback target of any `@smol` pattern. Moved off DeepSeek on 2026-10-27: Artificial Analysis puts Terra medium at TB4 32.3% in 209 s and 19K output tokens per task against DeepSeek V4.1 Flash 1017's 33.8% in 956 s and 218K. Pricing is $1/$5 per M, about 10x Haiku 5.5 and half Sonnet 5.5; Haiku 5.5 and DeepSeek Flash are the usual community picks for `smol` (omp docs example, standardcompute, james-carr.org). No suffix, so each agent keeps its own effort. Fallbacks (keyed on the exact model, so they cover the scout pin too): omp/deepseek-v4.1-flash low → Sonnet 5 low. Spell the combo id out; `deepseek/deepseek-flash:auto` resolved to an OpenRouter `~latest` route on atlas-agent without the DeepSeek prompt block. |
-| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. → gpt-6-luna:low → sonnet-5:low. |
+| `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, the Ctrl-cycle slot, and the fallback target of any `@smol` pattern. Moved off DeepSeek on 2026-10-27: Artificial Analysis puts Terra medium at TB4 32.3% in 209 s and 19K output tokens per task against DeepSeek V4.1 Flash 1017's 33.8% in 956 s and 218K. Pricing is $1/$5 per M, about 10x Haiku 5.5 and half Sonnet 5.5; Haiku 5.5 and DeepSeek Flash are the usual community picks for `smol` (omp docs example, standardcompute, james-carr.org). No suffix, so each agent keeps its own effort. Fallbacks (keyed on the exact model, so they cover the scout pin too): omp/deepseek-v4.1-flash low → Sonnet 5 low. Spell the combo id out; `deepseek/deepseek-flash:auto` resolved to an OpenRouter `~latest` route on atlas-agent without the DeepSeek prompt block. |
+| `sonic` | gpt-6-luna (no effort suffix; the bundled `sonic` agent configures medium) | OMP's bundled weak worker (`vibe_spawn` `fast`), pinned through `task.agentModelOverrides.sonic: "@sonic"`. Added 2026-10-29 after Luna carried DeepSeek's execution lanes acceptably: 27 Oct–29 Oct, 58 of 163 DeepSeek sessions fell back to Luna and ran 6,759 assistant turns there. OMO's `quick` and explore lanes also lead with Luna. → omp/deepseek-v4.1-flash (inherits effort). |
+| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → gpt-6-luna → sonnet-5, both inheriting `low`. |
 | `tiny` | omni/opencode-go/mimo-v2.6-flash | Session titles; `memory` follows it, but the backend is Hindsight. Chosen 2026-10-27 from opencode.ai/docs/go: $0.14/$0.28 per M, its own $60/mo bucket and 30,100 requests per 5 h on the $10 plan, no training, 0-day retention. A smoke title was good. Only fallback: `omni/openrouter/mistralai/mistral-nemo` ($0.029/$0.03 per M on OpenRouter's list). Left Codex (was gpt-6-luna:low). |
 | `advisor` | claude-sonnet-5-5:high | Invoked manually by the owner. High matches Opus 5.5 medium on real-project coding scores at lower quota burn. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `security` | gpt-daybreak-blue-latest:high | `security-reviewer`; Codex-only chain (Anthropic cyber refusals on RE work): → gpt-6-astra:high → gpt-6.1-sol:high → gpt-5.6-sol:high. Also usable for a manual main session after Anthropic refusals. 6.1 Sol's internal ExploitBench port is 21.5% vs 5.6 Sol's 3.5%. |
@@ -23,6 +24,16 @@ Git history here is the record of how seats moved.
 Agent pins (`task.agentModelOverrides`): `scout` → gpt-6.1-terra:medium (2026-10-27: the pin sets the effort that `smol` leaves open; 78 scouts on DeepSeek low had a median wall time of 747 s, 30 turns and 29K output tokens); `reviewer` → claude-opus-5-5 → gpt-6-astra:xhigh until
 the Claude 5x switch on Oct 8, then `@oracle`. `security-reviewer` → `@security` → `@oracle`.
 
+DeepSeek fallback (`retry.fallbackChains["omni/omp/deepseek-v4.1-flash"]`): gpt-6-luna → sonnet-5, both
+bare so they inherit the failing turn's effort. The exact-model key outranks role chains, so one chain
+covers prewalked `task` execution (high), `commit` (low) and every DeepSeek hop in other chains. Before
+2026-10-29 the prewalk target owned no chain and borrowed `commit`'s (`gpt-6-luna:low`), so execution
+lanes dropped from high to low effort. The trigger is a mid-stream `terminated` from OmniRoute (HTTP 502,
+usually 10–60 s into a thinking stream): per OmniRoute call logs (27 Oct 18:38 – 29 Oct 17:00 UTC), OpenCode Go
+account `main-3` terminated 51 of 6,173 streams (0.83%) against `main`'s 2 of 6,516 (0.03%).
+`main-3` is a separate account pinned to egress member `pool-egr1`; `main` and `main-2` share one
+account and stay direct. OmniRoute cannot fall back once bytes are streamed, so OMP walks this chain.
+
 The `omni` provider comes from the `omniroute-agent-extension` plugin (`omp plugin install
 omniroute-agent-extension@3.2.3` per host). It takes `OMNIROUTE_URL`, `OMNIROUTE_API_KEY` and
 `OMNIROUTE_AUTO_SYNC_INTERVAL_MINUTES` from the session environment (`shell/zshenv`, the key from
@@ -31,7 +42,7 @@ the dotfiles' `secrets/session.env`), so it needs no `config.json`. It syncs the
 
 Agents: OMP's bundled set only. On 2026-10-24 a preflight error for an unknown agent listed `scout`, `reviewer`,
 `security-reviewer`, `task` and `sonic`, plus `seance` from the omniroute plugin. There is no
-`~/.omp/agent/agents` override directory. `sonic` runs on `@smol`; `scout` is pinned above.
+`~/.omp/agent/agents` override directory. `sonic` runs on `@sonic`; `scout` is pinned above.
 
 On 2026-10-24 the custom agents (`sol-engineer`, `deepseek-worker`, `oracle`, and the `task` and
 `scout` overrides) were removed. `sol-engineer` was taking delegations that the default lane
@@ -56,7 +67,7 @@ The separate `codex-main/gpt-6.1-sol` 600K identity was removed on 2026-10-24: t
 ## Subscription balance
 
 - Anthropic (20x until Oct 8, then 5x): default, plan, slow, reviewer, advisor, designer.
-- Codex (Pro 20x): oracle, task planning, security, smol (including scout at medium), vision, and every refusal fallback.
+- Codex (Pro 20x): oracle, task planning, security, smol (including scout at medium), sonic, vision, the DeepSeek fallback, and every refusal fallback.
 - OmniRoute `omp/deepseek-v4.1-flash` combo (since 2026-10-27; OmniRoute combines OpenCode Go DeepSeek V4.1 Flash, $80 bucket on the $10/mo plan, with the metered DeepSeek API): commit, task execution after prewalk, the first smol fallback, and the advisor/designer/vision/task fallbacks.
 - OpenCode Go MiMo-V2.6-Flash ($60 bucket; 20% per 5 h and 50% per week, per opencode.ai/docs/go on 2026-10-27): tiny.
 - OpenRouter through OmniRoute (metered): the only tiny fallback.

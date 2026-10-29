@@ -11,6 +11,7 @@ modelRoles:
   oracle: openai-codex/gpt-6-astra:high
   task: openai-codex/gpt-6.1-sol:medium
   smol: openai-codex/gpt-6.1-terra
+  sonic: openai-codex/gpt-6-luna
   tiny: omni/opencode-go/mimo-v2.6-flash
   commit: omni/omp/deepseek-v4.1-flash:low
   advisor: anthropic/claude-sonnet-5-5:high
@@ -33,6 +34,8 @@ searxng:
   endpoint: https://search.p0g.ca
 task:
   agentModelOverrides:
+    sonic:
+      - "@sonic"
     scout:
       - openai-codex/gpt-6.1-terra:medium
     security-reviewer:
@@ -75,11 +78,13 @@ retry:
     openai-codex/gpt-6.1-terra:
       - omni/omp/deepseek-v4.1-flash:low
       - anthropic/claude-sonnet-5:low
+    omni/omp/deepseek-v4.1-flash:
+      - openai-codex/gpt-6-luna
+      - anthropic/claude-sonnet-5
+    sonic:
+      - omni/omp/deepseek-v4.1-flash
     tiny:
       - omni/openrouter/mistralai/mistral-nemo
-    commit:
-      - openai-codex/gpt-6-luna:low
-      - anthropic/claude-sonnet-5:low
     advisor:
       - openai-codex/gpt-5.6-sol:medium
       - omni/omp/deepseek-v4.1-flash:high
