@@ -133,6 +133,7 @@ models in `DEEPSEEK_MODELS` it renders `prompts/deepseek-block0.hbs` as block 0;
 model it renders OMP's bundled block 0 byte-for-byte (`prompts/upstream-system-prompt.md`,
 vendored per release). OMP re-renders block 0 on every model change, so the default task gets
 the DeepSeek block from the prewalk handoff on, with the same tools Sol had.
+Both branches use OMP's supplied `intentGuidance` when available, with a default otherwise.
 
 - Rebuild after editing the block or upgrading OMP: `python3 prompts/build-system-template.py`.
   It refuses to build when the bundled template changed upstream; review the printed diff,

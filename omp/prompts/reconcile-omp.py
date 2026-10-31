@@ -16,11 +16,12 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
 TEMPLATE = HERE.parent / "SYSTEM_TEMPLATE.md"
 CANDIDATE = Path("/tmp/SYSTEM_TEMPLATE.new.md")
-SMOKE = {
-    "omni/omp/deepseek-v4.1-flash": "You are DeepSeek V4.1 Flash",
-    "omni/omp/deepseek-v4.1-flash:low": "You are DeepSeek V4.1 Flash",
-    "openai-codex/gpt-5.6-sol": "RFC 2119 keywords",
-}
+# `--model` takes no ":<effort>" suffix; `--thinking` sets the level the prompt renders as a suffix.
+SMOKE = (
+    ("omni/omp/deepseek-v4.1-flash", None, "You are DeepSeek V4.1 Flash"),
+    ("omni/omp/deepseek-v4.1-flash", "low", "You are DeepSeek V4.1 Flash"),
+    ("openai-codex/gpt-5.6-sol", None, "RFC 2119 keywords"),
+)
 
 
 def run(*args: str) -> subprocess.CompletedProcess[str]:
@@ -34,12 +35,12 @@ def installed_version() -> str:
     return match.group(1)
 
 
-def block0(model: str) -> str:
+def block0(model: str, thinking: str | None) -> str:
     request = json.dumps({"id": "s", "type": "get_state"}) + "\n"
-    proc = subprocess.run(
-        ["omp", "--mode", "rpc", "--no-session", "--model", model],
-        cwd=REPO, input=request, capture_output=True, text=True, timeout=120,
-    )
+    args = ["omp", "--mode", "rpc", "--no-session", "--model", model]
+    if thinking:
+        args += ["--thinking", thinking]
+    proc = subprocess.run(args, cwd=REPO, input=request, capture_output=True, text=True, timeout=120)
     for line in proc.stdout.splitlines():
         try:
             event = json.loads(line)
@@ -76,11 +77,12 @@ def main() -> None:
         run("python3", "omp/prompts/build-system-template.py", "--accept-upstream")
         print(f"installed SYSTEM_TEMPLATE.md for omp {version}")
 
-    for model, prefix in SMOKE.items():
-        ok = block0(model).startswith(prefix)
-        print(f"{'ok  ' if ok else 'FAIL'} live block 0 for {model}")
+    for model, thinking, prefix in SMOKE:
+        label = f"{model}:{thinking}" if thinking else model
+        ok = block0(model, thinking).startswith(prefix)
+        print(f"{'ok  ' if ok else 'FAIL'} live block 0 for {label}")
         if not ok:
-            needs.append(f"live block 0 for {model} does not start with {prefix!r}")
+            needs.append(f"live block 0 for {label} does not start with {prefix!r}")
 
     changed = run("git", "status", "--porcelain", "--", "omp/prompts").stdout.strip()
     if changed and not needs:

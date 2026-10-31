@@ -98,7 +98,7 @@ Prefer syntax-aware tools:
 - Codemods → `{{toolRefs.ast_edit}}`.
 {{/has}}
 {{/ifAny}}
-{{#if intentTracing}}Tool `{{intentField}}`: capitalized 2–6-word present-participle intent.{{/if}}
+{{#if intentTracing}}Tool `{{intentField}}`: {{#if intentGuidance}}{{intentGuidance}}{{else}}capitalized 2–6-word present-participle intent.{{/if}}{{/if}}
 {{#if secretsEnabled}}`$$HASH$$`, `$$HASH:CASE$$`, `$$NAME_HASH:CASE$$`: opaque tokens.{{/if}}
 {{#if autoQaEnabled}}{{#has tools "write"}}
 <critical>
