@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# JSON-RPC client for the OmniRoute A2A agent surface.
+#
+# The A2A endpoint answers skill requests and returns artifacts: a synthesized
+# answer instead of the raw management tools that the MCP surface exposes.
+# Skills: smart-routing, quota-management, provider-discovery, cost-analysis,
+# health-report, list-capabilities.
+#
+# The management credential comes from the sops session environment
+# (secrets/session.env -> OMNIROUTE_MANAGEMENT_KEY) and is written to a private
+# tmpfs curl config; it never reaches argv or output.
+set -euo pipefail
+
+readonly BASE="${OMNIROUTE_URL:-https://omniroute.p0g.ca}"
+
+usage() {
+  cat >&2 <<'EOF'
+usage: .omp/bin/omniroute-a2a [--json] [--skill ID] [MESSAGE]
+       .omp/bin/omniroute-a2a --list
+       echo "question" | .omp/bin/omniroute-a2a --skill health-report -
+
+MESSAGE  question text for the skill; `-` reads stdin (default when no
+         MESSAGE is given and stdin is not a terminal).
+--skill  A2A skill id (default: smart-routing). `--list` shows the catalog.
+--json   print the raw JSON-RPC result instead of the artifact text.
+
+Exit status is non-zero when the gateway returns a JSON-RPC error, which
+includes the A2A endpoint being disabled in the gateway settings.
+EOF
+  exit 2
+}
+
+die() { echo "omniroute-a2a: $*" >&2; exit 1; }
+
+skill=smart-routing
+raw=0
+message=""
+while (($#)); do
+  case "$1" in
+    --list) skill=list-capabilities; shift ;;
+    --json) raw=1; shift ;;
+    --skill) [[ $# -ge 2 ]] || usage; skill="$2"; shift 2 ;;
+    -h|--help) usage ;;
+    --) shift; message="$*"; break ;;
+    *) message="$*"; break ;;
+  esac
+done
+
+umask 077
+work="$(mktemp -d "${XDG_RUNTIME_DIR:-/dev/shm}/omniroute-a2a.XXXXXX")"
+trap 'rm -rf "$work"' EXIT
+
+if [[ "$message" == "-" ]]; then
+  message="$(<&0)"
+fi
+if [[ -z "$message" && ! -t 0 ]]; then
+  message="$(<&0)"
+fi
+[[ -n "$message" ]] || message="run the $skill skill"
+
+key="${OMNIROUTE_MANAGEMENT_KEY:-}"
+[[ -n "$key" ]] || die "OMNIROUTE_MANAGEMENT_KEY is unset; start a new login shell so secrets/session.env loads"
+printf 'header = "Authorization: Bearer %s"\n' "$key" >"$work/auth.curl"
+
+jq -n --arg skill "$skill" --arg message "$message" \
+  '{jsonrpc:"2.0", id:1, method:"message/send", params:{skill:$skill, messages:[{role:"user", content:$message}]}}' \
+  >"$work/request.json"
+
+curl -sS -K "$work/auth.curl" -X POST "$BASE/a2a" \
+  -H 'content-type: application/json' --data @"$work/request.json" \
+  -o "$work/response.json" \
+  || die "request failed"
+
+if ! jq -e '.result' "$work/response.json" >/dev/null 2>&1; then
+  jq -r '"omniroute-a2a: " + (.error.message // "unexpected response")' "$work/response.json" >&2 || true
+  exit 1
+fi
+
+if ((raw)); then
+  jq '.result' "$work/response.json"
+else
+  jq -r '.result.artifacts[]?.content // empty' "$work/response.json"
+fi

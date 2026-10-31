@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "omniroute": {
+      "type": "http",
+      "url": "https://omniroute.p0g.ca/api/mcp/stream",
+      "headers": {
+        "Authorization": "!test -n \"$OMNIROUTE_MANAGEMENT_KEY\" && printf 'Bearer %s' \"$OMNIROUTE_MANAGEMENT_KEY\""
+      },
+      "instructions": false
+    }
+  }
+}
