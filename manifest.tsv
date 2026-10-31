@@ -41,6 +41,7 @@ link	xerahs/app-xerahs.service	~/.config/systemd/user/app-xerahs.service	worksta
 seed	xerahs/mac-WorkflowsConfig.json	~/Documents/XerahS/Settings/WorkflowsConfig.json	mac
 seed	xerahs/p0g.sxcu	~/Documents/XerahS/Plugins/p0g.sxcu	mac
 decrypt	secrets/ssh-fleet.conf.age	~/.ssh/config.d/borrrk	workstation,atlas-agent
+decrypt	secrets/omniroute-claude.key.age	~/.config/dotfiles/omniroute-claude.key	workstation,atlas-agent,mac
 link	terminal/tmux.conf	~/.tmux.conf	all
 link	terminal/wezterm.lua	~/.wezterm.lua	workstation,mac
 link	terminal/ghostty/config	~/.config/ghostty/config	workstation,mac

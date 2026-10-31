@@ -1,5 +1,5 @@
-# Claude effort ladders cap Jev auto at high for the configured native models; explicit xhigh and
-# max are unavailable for those identities too. Other providers retain their own effort ladders.
+# Claude effort ladders cap Jev auto at high for the configured native and gateway models;
+# explicit xhigh and max are unavailable for those identities too.
 # Codex context windows: GPT-6.1 Sol's catalog lists 500K; other configured Codex models are
 # owner-directed to the same limit. Subscription usage has no long-context fee; API billing differs.
 providers:
@@ -22,6 +22,84 @@ providers:
           mode: anthropic-adaptive
           efforts: [low, medium, high]
       claude-sonnet-5:
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+  gateway-claude:
+    baseUrl: https://omniroute.p0g.ca/v1
+    api: anthropic-messages
+    auth: apiKey
+    apiKey: "!printenv OMNIROUTE_API_KEY"
+    models:
+      - id: cc/claude-opus-5-5
+        name: Claude Opus 5.5
+        reasoning: true
+        input: [text, image]
+        contextWindow: 1000000
+        maxTokens: 128000
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      - id: cc/claude-mythos-5-1
+        name: Claude Mythos 5.1
+        reasoning: true
+        input: [text, image]
+        contextWindow: 1000000
+        maxTokens: 128000
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      - id: cc/claude-fable-5-1
+        name: Claude Fable 5.1
+        reasoning: true
+        input: [text, image]
+        contextWindow: 1000000
+        maxTokens: 128000
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      - id: cc/claude-sonnet-5-5
+        name: Claude Sonnet 5.5
+        reasoning: true
+        input: [text, image]
+        contextWindow: 1000000
+        maxTokens: 128000
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+  gateway-claude-api:
+    baseUrl: https://omniroute.p0g.ca/v1
+    api: anthropic-messages
+    auth: apiKey
+    apiKey: '!cat "$HOME/.config/dotfiles/omniroute-claude.key"'
+    models:
+      - id: anthropic/claude-opus-5-5
+        name: Claude Opus 5.5
+        reasoning: true
+        input: [text, image]
+        cost: {input: 4, output: 20, cacheRead: 0.2, cacheWrite: 5}
+        contextWindow: 1000000
+        maxTokens: 128000
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      - id: anthropic/claude-fable-5-1
+        name: Claude Fable 5.1
+        reasoning: true
+        input: [text, image]
+        cost: {input: 10, output: 50, cacheRead: 0.25, cacheWrite: 12.5}
+        contextWindow: 1000000
+        maxTokens: 128000
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      - id: anthropic/claude-sonnet-5-5
+        name: Claude Sonnet 5.5
+        reasoning: true
+        input: [text, image]
+        cost: {input: 2, output: 10, cacheRead: 0.1, cacheWrite: 2.5}
+        contextWindow: 1000000
+        maxTokens: 128000
         thinking:
           mode: anthropic-adaptive
           efforts: [low, medium, high]

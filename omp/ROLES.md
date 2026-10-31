@@ -7,18 +7,18 @@ Git history here is the record of how seats moved.
 
 | Role | Model | Why |
 |---|---|---|
-| `default` | claude-opus-5-5:auto | OMO reference orchestrator. On failure → gpt-6.1-sol:medium → gpt-6-sol:medium → gpt-5.6-sol:medium. |
-| `plan` | claude-mythos-5-1:auto | Scarce premium for planning. → gpt-6-astra:xhigh → claude-opus-5-5:high. |
-| `slow` | claude-fable-5-1:auto | Manual deep-think escalation (Ctrl-cycle). → gpt-6-astra:xhigh → gpt-6.1-sol:xhigh. |
+| `default` | claude-opus-5-5:auto | OMO reference orchestrator. On failure → gateway subscription Opus → gateway API Opus → gpt-6.1-sol:medium → gpt-6-sol:medium → gpt-5.6-sol:medium. |
+| `plan` | claude-mythos-5-1:auto | Scarce premium for planning. → gateway subscription Mythos → gateway API Opus → gpt-6-astra:xhigh → claude-opus-5-5:high. |
+| `slow` | claude-fable-5-1:auto | Manual deep-think escalation (Ctrl-cycle). → gateway subscription Fable → gateway API Fable → gpt-6-astra:xhigh → gpt-6.1-sol:xhigh. |
 | `oracle` | gpt-6-astra:high | Hard-reasoning/verdict lanes (OMO ultrabrain/deep-high, #8616). Lowered from xhigh 2026-09-29: Astra spent 1,205 output tokens/turn (73% hidden reasoning) vs Sol's 319; OMO deep-high followed 2026-10-01 (#9372). → gpt-6.1-sol:xhigh → claude-opus-5-5. 6.1 Sol stays behind Astra on verdict seats: it pushes past blocks in 23.5% of rollouts (Astra 17.4%) and misrepresents at 1.50% (Astra 0.51%). |
 | `task` | gpt-6.1-sol:medium | Bundled `task` agent's planning seat. OMO deep-low leads with 6.1 Sol at medium (#9214): GPT-6 Sol's price, DeepSWE 75.2% at high vs GPT-6 Sol's 68.8% at max. `task.agentPrewalk.task` hands execution to `omni/omp/deepseek-v4.1-flash:high` at the first eligible edit/write. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, the Ctrl-cycle slot, and `@smol` targets. The scout pin sets medium. Exact-model fallbacks: omp/deepseek-v4.1-flash:low → sonnet-5-5:low. Spell out the combo ID so the DeepSeek prompt block matches. |
 | `sonic` | gpt-6-luna (no effort suffix; the bundled `sonic` agent configures medium) | OMP's bundled weak worker (`vibe_spawn` `fast`), pinned through `task.agentModelOverrides.sonic: "@sonic"`. Added 2026-10-29 after Luna carried DeepSeek's execution lanes acceptably: 27 Oct–29 Oct, 58 of 163 DeepSeek sessions fell back to Luna and ran 6,759 assistant turns there. OMO's `quick` and explore lanes also lead with Luna. → omp/deepseek-v4.1-flash (inherits effort). |
 | `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → DeepSeek direct → gpt-6-luna → sonnet-5-5, all inheriting `low`. |
 | `tiny` | omni/opencode-go/mimo-v2.6-flash | Session titles; `memory` follows it, but the backend is Hindsight. Chosen 2026-10-27 from opencode.ai/docs/go: $0.14/$0.28 per M, its own $60/mo bucket and 30,100 requests per 5 h on the $10 plan, no training, 0-day retention. A smoke title was good. Only fallback: `omni/openrouter/mistralai/mistral-nemo` ($0.029/$0.03 per M on OpenRouter's list). Left Codex (was gpt-6-luna:low). |
-| `advisor` | claude-sonnet-5-5:auto | Invoked manually by the owner. → gpt-6.1-sol:medium → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
+| `advisor` | claude-sonnet-5-5:auto | Invoked manually by the owner. → gateway subscription Sonnet → gateway API Sonnet → gpt-6.1-sol:medium → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `security` | gpt-daybreak-blue-latest:high | `security-reviewer`; Codex-only chain (Anthropic cyber refusals on RE work): → gpt-6-astra:high → gpt-6.1-sol:high → gpt-5.6-sol:high. Also usable for a manual main session after Anthropic refusals. 6.1 Sol's internal ExploitBench port is 21.5% vs 5.6 Sol's 3.5%. |
-| `designer` | claude-sonnet-5-5:auto | Sonnet 5.5's design strength at lower quota burn than Opus; low-traffic seat. |
+| `designer` | claude-sonnet-5-5:auto | Sonnet 5.5's design strength at lower quota burn than Opus; → gateway subscription Sonnet → gateway API Sonnet → omp/deepseek-v4.1-flash:high. |
 | `vision` | gpt-5.6-sol:low | Off the Claude pool. → claude-sonnet-5-5:medium (chart reading 61.6% vs Sonnet 5's 15.6%) → omp/deepseek-v4.1-flash:high. |
 
 Agent pins (`task.agentModelOverrides`): `scout` → gpt-6.1-terra:medium (2026-10-27: the pin sets the effort that `smol` leaves open; 78 scouts on DeepSeek low had a median wall time of 747 s, 30 turns and 29K output tokens); `reviewer` → claude-opus-5-5 → gpt-6-astra:xhigh until
@@ -32,11 +32,25 @@ DeepSeek hop in other chains. Before 2026-10-29 the prewalk target owned no chai
 (`gpt-6-luna:low`), so execution lanes skipped DeepSeek direct and dropped from high to low effort.
 `DEEPSEEK_MODELS` includes the direct id, so the fallback keeps the DeepSeek block 0.
 
-Claude role selectors use Jev `auto`. `models.yml` limits the five configured native Anthropic
-model identities to low, medium and high: this also removes explicit xhigh/max for those identities,
-but leaves other providers' auto ceiling unchanged. Fallback selectors inherit the failing effort
-unless they specify a concrete level; `:auto` on a fallback does not force a new classification.
-Gateway aliases are separate identities and are not covered by these native-model overrides.
+Claude role selectors use Jev `auto`. `models.yml` limits the configured native Anthropic,
+`gateway-claude` and `gateway-claude-api` model identities to low, medium and high: explicit
+xhigh/max are unavailable on those identities too. Other providers retain their own auto ceiling.
+Fallback selectors inherit the failing effort unless they specify a concrete level; `:auto` on a
+fallback does not force a new classification. Other gateway aliases do not inherit these limits.
+
+`gateway-claude` sends Anthropic Messages to OmniRoute using the existing dotfiles key and
+explicit `cc/` model IDs. This route uses subscription connections, not the metered Anthropic
+API. A signed-thinking tool exchange through the gateway and an OMP fallback from a native
+429 to gateway Opus succeeded on 2026-10-31; neither proves mid-session account-switch safety.
+Anthropic subscription OAuth in third-party clients has a policy risk; see the matching criteria.
+
+`gateway-claude-api` also uses Anthropic Messages, with a separate encrypted dotfiles key restricted
+to the Anthropic API connection and the configured Opus, Fable and Sonnet IDs. OmniRoute enforces a
+$5 daily limit on this key; it resets at 03:00 UTC. It is not an organization-wide cap, does not
+track other consumers or the credit renewal date, and concurrent or in-flight requests may overshoot.
+With the guard temporarily below recorded spend, OmniRoute rejected the API request and OMP fell
+back to Codex; the $5 limit was restored. The API response and native-to-gateway subscription
+fallback were also exercised on 2026-10-31.
 
 Why OMP must own this hop: the trigger is a mid-stream `terminated` (OmniRoute logs HTTP 502, usually
 10–60 s into the reasoning stream). OmniRoute 3.8.52 cannot move a committed stream to the next combo
@@ -80,11 +94,14 @@ The separate `codex-main/gpt-6.1-sol` 600K identity was removed on 2026-10-24: t
 
 ## Subscription balance
 
-- Native Anthropic: default, plan, slow, reviewer, advisor and designer. Gateway Claude
-  subscription and API connections are separate from the native OMP credential.
+- Native Anthropic: default, plan, slow, reviewer, advisor and designer. The gateway's Claude
+  subscription connections provide the first fallback for the main Claude roles; they are
+  separate connections from the native OMP credential and may include the same subscription.
 - Codex: oracle, task planning, security, smol (including scout at medium), sonic, vision,
-  the DeepSeek fallback, and the default and advisor fallback chains.
-- OmniRoute `omp/deepseek-v4.1-flash` combo (since 2026-10-27; OmniRoute combines OpenCode Go DeepSeek V4.1 Flash, $80 bucket on the $10/mo plan, with the metered DeepSeek API): commit, task execution after prewalk, the first smol fallback, and the advisor/designer/vision/task fallbacks.
+  the DeepSeek fallback, and later default and advisor fallbacks.
+- OmniRoute `omp/deepseek-v4.1-flash` combo: commit, task execution after prewalk, and several
+  role fallbacks. OpenCode Go's published DeepSeek Flash allowance is $100/month on the $10 plan
+  as of 2026-10-31; the combo also has a metered DeepSeek API fallback.
 - OpenCode Go MiMo-V2.6-Flash ($60 bucket; 20% per 5 h and 50% per week, per opencode.ai/docs/go on 2026-10-27): tiny.
 - OpenRouter through OmniRoute (metered): the only tiny fallback.
 
