@@ -10,6 +10,19 @@ docs, the policy tests that pin the chains, and how conflicts actually get settl
 routing commits. The numeric weights in the final section are our own translation for
 scoring OMP seats. They are not OMO data.
 
+## Update: 2026-10-31
+
+The [current guide](https://github.com/code-yeongyu/oh-my-openagent/blob/f34f5f130f1198a2c6d30ee9597a75edbf57acbe/docs/guide/agent-model-matching.md)
+now leads Daily Normal with Opus 5.5 medium, then Kimi K3.1 Pro and GLM 5.3. Obsessive
+Normal leads with Astra medium, then GPT-6.1 Sol Fast, GPT-6.1 Sol and GPT-5.6 Sol at medium.
+Deep-low remains GPT-6.1 Sol medium; deep-high remains Astra high. Quick adds Haiku 5.5
+medium before DeepSeek direct. Visual engineering and writing lead with Gemini 4 Argon low,
+conditional on catalog support. Fable 5.5 is explicitly unreleased and launch-gated.
+
+The sections below record the earlier revision, not the current ladders. OMO recommendations do
+not prove that an OMP provider serves a model, that its quota is available, or that OMP uses
+OMO's model-specific prompt.
+
 ## Sources
 
 | What | Where (origin/dev) |

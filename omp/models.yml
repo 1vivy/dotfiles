@@ -1,9 +1,30 @@
-# Codex context windows (2026-10-24). OpenAI raised GPT-6.1 Sol's Codex/Work default from 272K to
-# 500K (OMP's catalog already lists 500K for it). Every other Codex model used here is set to the
-# same 500K. An explicit contextWindow wins globally for its provider/model identity, including task
-# children. Backend acceptance of 500K is announced for gpt-6.1-sol only; the others are
-# owner-directed. Subscription usage has no long-context fee; the >272K surcharge is API billing.
+# Claude effort ladders cap Jev auto at high for the configured native models; explicit xhigh and
+# max are unavailable for those identities too. Other providers retain their own effort ladders.
+# Codex context windows: GPT-6.1 Sol's catalog lists 500K; other configured Codex models are
+# owner-directed to the same limit. Subscription usage has no long-context fee; API billing differs.
 providers:
+  anthropic:
+    modelOverrides:
+      claude-opus-5-5:
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      claude-mythos-5-1:
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      claude-fable-5-1:
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      claude-sonnet-5-5:
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
+      claude-sonnet-5:
+        thinking:
+          mode: anthropic-adaptive
+          efforts: [low, medium, high]
   openai-codex:
     modelOverrides:
       gpt-6-astra:

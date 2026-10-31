@@ -5,18 +5,18 @@ theme:
   light: light
 defaultThinkingLevel: auto
 modelRoles:
-  default: anthropic/claude-opus-5-5
-  plan: anthropic/claude-mythos-5-1:xhigh
-  slow: anthropic/claude-fable-5-1:xhigh
+  default: anthropic/claude-opus-5-5:auto
+  plan: anthropic/claude-mythos-5-1:auto
+  slow: anthropic/claude-fable-5-1:auto
   oracle: openai-codex/gpt-6-astra:high
   task: openai-codex/gpt-6.1-sol:medium
   smol: openai-codex/gpt-6.1-terra
   sonic: openai-codex/gpt-6-luna
   tiny: omni/opencode-go/mimo-v2.6-flash
   commit: omni/omp/deepseek-v4.1-flash:low
-  advisor: anthropic/claude-sonnet-5-5:high
+  advisor: anthropic/claude-sonnet-5-5:auto
   security: openai-codex/gpt-daybreak-blue-latest:high
-  designer: anthropic/claude-sonnet-5-5:high
+  designer: anthropic/claude-sonnet-5-5:auto
   vision: openai-codex/gpt-5.6-sol:low
 cycleOrder:
   - smol
@@ -61,11 +61,12 @@ task:
 retry:
   fallbackChains:
     default:
+      - openai-codex/gpt-6.1-sol:medium
       - openai-codex/gpt-6-sol:medium
       - openai-codex/gpt-5.6-sol:medium
     plan:
       - openai-codex/gpt-6-astra:xhigh
-      - anthropic/claude-opus-5-5:xhigh
+      - anthropic/claude-opus-5-5:high
     slow:
       - openai-codex/gpt-6-astra:xhigh
       - openai-codex/gpt-6.1-sol:xhigh
@@ -77,16 +78,17 @@ retry:
       - omni/omp/deepseek-v4.1-flash:high
     openai-codex/gpt-6.1-terra:
       - omni/omp/deepseek-v4.1-flash:low
-      - anthropic/claude-sonnet-5:low
+      - anthropic/claude-sonnet-5-5:low
     omni/omp/deepseek-v4.1-flash:
       - omni/deepseek/deepseek-flash
       - openai-codex/gpt-6-luna
-      - anthropic/claude-sonnet-5
+      - anthropic/claude-sonnet-5-5
     sonic:
       - omni/omp/deepseek-v4.1-flash
     tiny:
       - omni/openrouter/mistralai/mistral-nemo
     advisor:
+      - openai-codex/gpt-6.1-sol:medium
       - openai-codex/gpt-5.6-sol:medium
       - omni/omp/deepseek-v4.1-flash:high
     security:

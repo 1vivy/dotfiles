@@ -7,18 +7,18 @@ Git history here is the record of how seats moved.
 
 | Role | Model | Why |
 |---|---|---|
-| `default` | claude-opus-5-5 | OMO reference orchestrator. Fallback is Opus-refusal/outage only: gpt-6-sol:medium → gpt-5.6-sol:medium. Fable is skipped because the same cyber classifier refuses it. For a manual GPT main session, select `openai-codex/gpt-6.1-sol` directly (500K). |
-| `plan` | claude-fable-5-1:xhigh | Scarce premium on a low-frequency, high-leverage seat (OMO Prometheus/Metis). Astra catches refusals. |
-| `slow` | claude-fable-5-1:xhigh | Manual deep-think escalation (Ctrl-cycle) and advisor fallback. → gpt-6-astra:xhigh → gpt-6.1-sol:xhigh. |
+| `default` | claude-opus-5-5:auto | OMO reference orchestrator. On failure → gpt-6.1-sol:medium → gpt-6-sol:medium → gpt-5.6-sol:medium. |
+| `plan` | claude-mythos-5-1:auto | Scarce premium for planning. → gpt-6-astra:xhigh → claude-opus-5-5:high. |
+| `slow` | claude-fable-5-1:auto | Manual deep-think escalation (Ctrl-cycle). → gpt-6-astra:xhigh → gpt-6.1-sol:xhigh. |
 | `oracle` | gpt-6-astra:high | Hard-reasoning/verdict lanes (OMO ultrabrain/deep-high, #8616). Lowered from xhigh 2026-09-29: Astra spent 1,205 output tokens/turn (73% hidden reasoning) vs Sol's 319; OMO deep-high followed 2026-10-01 (#9372). → gpt-6.1-sol:xhigh → claude-opus-5-5. 6.1 Sol stays behind Astra on verdict seats: it pushes past blocks in 23.5% of rollouts (Astra 17.4%) and misrepresents at 1.50% (Astra 0.51%). |
 | `task` | gpt-6.1-sol:medium | Bundled `task` agent's planning seat. OMO deep-low leads with 6.1 Sol at medium (#9214): GPT-6 Sol's price, DeepSWE 75.2% at high vs GPT-6 Sol's 68.8% at max. `task.agentPrewalk.task` hands execution to `omni/omp/deepseek-v4.1-flash:high` at the first eligible edit/write. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
-| `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, the Ctrl-cycle slot, and the fallback target of any `@smol` pattern. Moved off DeepSeek on 2026-10-27: Artificial Analysis puts Terra medium at TB4 32.3% in 209 s and 19K output tokens per task against DeepSeek V4.1 Flash 1017's 33.8% in 956 s and 218K. Pricing is $1/$5 per M, about 10x Haiku 5.5 and half Sonnet 5.5; Haiku 5.5 and DeepSeek Flash are the usual community picks for `smol` (omp docs example, standardcompute, james-carr.org). No suffix, so each agent keeps its own effort. Fallbacks (keyed on the exact model, so they cover the scout pin too): omp/deepseek-v4.1-flash low → Sonnet 5 low. Spell the combo id out; `deepseek/deepseek-flash:auto` resolved to an OpenRouter `~latest` route on atlas-agent without the DeepSeek prompt block. |
+| `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, the Ctrl-cycle slot, and `@smol` targets. The scout pin sets medium. Exact-model fallbacks: omp/deepseek-v4.1-flash:low → sonnet-5-5:low. Spell out the combo ID so the DeepSeek prompt block matches. |
 | `sonic` | gpt-6-luna (no effort suffix; the bundled `sonic` agent configures medium) | OMP's bundled weak worker (`vibe_spawn` `fast`), pinned through `task.agentModelOverrides.sonic: "@sonic"`. Added 2026-10-29 after Luna carried DeepSeek's execution lanes acceptably: 27 Oct–29 Oct, 58 of 163 DeepSeek sessions fell back to Luna and ran 6,759 assistant turns there. OMO's `quick` and explore lanes also lead with Luna. → omp/deepseek-v4.1-flash (inherits effort). |
-| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → DeepSeek direct → gpt-6-luna → sonnet-5, all inheriting `low`. |
+| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → DeepSeek direct → gpt-6-luna → sonnet-5-5, all inheriting `low`. |
 | `tiny` | omni/opencode-go/mimo-v2.6-flash | Session titles; `memory` follows it, but the backend is Hindsight. Chosen 2026-10-27 from opencode.ai/docs/go: $0.14/$0.28 per M, its own $60/mo bucket and 30,100 requests per 5 h on the $10 plan, no training, 0-day retention. A smoke title was good. Only fallback: `omni/openrouter/mistralai/mistral-nemo` ($0.029/$0.03 per M on OpenRouter's list). Left Codex (was gpt-6-luna:low). |
-| `advisor` | claude-sonnet-5-5:high | Invoked manually by the owner. High matches Opus 5.5 medium on real-project coding scores at lower quota burn. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
+| `advisor` | claude-sonnet-5-5:auto | Invoked manually by the owner. → gpt-6.1-sol:medium → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `security` | gpt-daybreak-blue-latest:high | `security-reviewer`; Codex-only chain (Anthropic cyber refusals on RE work): → gpt-6-astra:high → gpt-6.1-sol:high → gpt-5.6-sol:high. Also usable for a manual main session after Anthropic refusals. 6.1 Sol's internal ExploitBench port is 21.5% vs 5.6 Sol's 3.5%. |
-| `designer` | claude-sonnet-5-5:high | Sonnet 5.5's design strength at lower quota burn than Opus; low-traffic seat. |
+| `designer` | claude-sonnet-5-5:auto | Sonnet 5.5's design strength at lower quota burn than Opus; low-traffic seat. |
 | `vision` | gpt-5.6-sol:low | Off the Claude pool. → claude-sonnet-5-5:medium (chart reading 61.6% vs Sonnet 5's 15.6%) → omp/deepseek-v4.1-flash:high. |
 
 Agent pins (`task.agentModelOverrides`): `scout` → gpt-6.1-terra:medium (2026-10-27: the pin sets the effort that `smol` leaves open; 78 scouts on DeepSeek low had a median wall time of 747 s, 30 turns and 29K output tokens); `reviewer` → claude-opus-5-5 → gpt-6-astra:xhigh until
@@ -26,11 +26,17 @@ the Claude 5x switch on Oct 8, then `@oracle`. `security-reviewer` → `@securit
 
 DeepSeek fallback (`retry.fallbackChains["omni/omp/deepseek-v4.1-flash"]`): `omni/deepseek/deepseek-flash`
 (DeepSeek direct through OmniRoute, the combo's own second step, under the Dotfiles key's 5M-token daily
-cap) → gpt-6-luna → sonnet-5. All bare, so they inherit the failing turn's effort. The exact-model key
+cap) → gpt-6-luna → sonnet-5-5. All bare, so they inherit the failing turn's effort. The exact-model key
 outranks role chains, so one chain covers prewalked `task` execution (high), `commit` (low) and every
 DeepSeek hop in other chains. Before 2026-10-29 the prewalk target owned no chain and borrowed `commit`'s
 (`gpt-6-luna:low`), so execution lanes skipped DeepSeek direct and dropped from high to low effort.
 `DEEPSEEK_MODELS` includes the direct id, so the fallback keeps the DeepSeek block 0.
+
+Claude role selectors use Jev `auto`. `models.yml` limits the five configured native Anthropic
+model identities to low, medium and high: this also removes explicit xhigh/max for those identities,
+but leaves other providers' auto ceiling unchanged. Fallback selectors inherit the failing effort
+unless they specify a concrete level; `:auto` on a fallback does not force a new classification.
+Gateway aliases are separate identities and are not covered by these native-model overrides.
 
 Why OMP must own this hop: the trigger is a mid-stream `terminated` (OmniRoute logs HTTP 502, usually
 10–60 s into the reasoning stream). OmniRoute 3.8.52 cannot move a committed stream to the next combo
@@ -74,13 +80,14 @@ The separate `codex-main/gpt-6.1-sol` 600K identity was removed on 2026-10-24: t
 
 ## Subscription balance
 
-- Anthropic (20x until Oct 8, then 5x): default, plan, slow, reviewer, advisor, designer.
-- Codex (Pro 20x): oracle, task planning, security, smol (including scout at medium), sonic, vision, the DeepSeek fallback, and every refusal fallback.
+- Native Anthropic: default, plan, slow, reviewer, advisor and designer. Gateway Claude
+  subscription and API connections are separate from the native OMP credential.
+- Codex: oracle, task planning, security, smol (including scout at medium), sonic, vision,
+  the DeepSeek fallback, and the default and advisor fallback chains.
 - OmniRoute `omp/deepseek-v4.1-flash` combo (since 2026-10-27; OmniRoute combines OpenCode Go DeepSeek V4.1 Flash, $80 bucket on the $10/mo plan, with the metered DeepSeek API): commit, task execution after prewalk, the first smol fallback, and the advisor/designer/vision/task fallbacks.
 - OpenCode Go MiMo-V2.6-Flash ($60 bucket; 20% per 5 h and 50% per week, per opencode.ai/docs/go on 2026-10-27): tiny.
 - OpenRouter through OmniRoute (metered): the only tiny fallback.
 
-Deferred to Oct 8: `reviewer` → `@oracle`.
 
 ## Grounding
 
