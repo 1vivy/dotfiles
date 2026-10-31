@@ -61,6 +61,10 @@ recording it or drawing conclusions.
 It requires no report template, permanent test suite, or new CI gate.
 Repository instructions retain the project's commands, conventions, and acceptance criteria.
 
+`collie-walky-talky` is an on-demand skill for messaging between Collie agent panes. It reads the
+installed Collie's current guidance instead of copying version-specific instructions into each
+harness. Collie itself remains independently installed on hosts that use it.
+
 ## Profiles
 
 `./install.sh --profile <name>` installs only the entries whose `profiles` column names that profile
