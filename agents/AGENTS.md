@@ -15,7 +15,7 @@ Repository instructions extend them and take precedence within their scope.
 
 ## Skills and evidence
 
-- Use `engineering-evidence` for investigations, contract comparisons, uncertain probes, and claims about behavior or completion.
+- When evidence is difficult to reconcile, use `engineering-evidence` before drawing conclusions or saving evidence.
 - Start with the smallest observation that can change the decision.
 - Keep evidence that supports an active claim or unresolved question.
 - Use `asd-ste100` when project guidance requires it or technical wording needs clarification.

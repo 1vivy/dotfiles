@@ -1,6 +1,6 @@
 ---
 name: engineering-evidence
-description: Use when investigating bugs, comparing contracts, interpreting probes, or reporting behavior. Separate observations from conclusions and qualify each claim.
+description: Use when observations or sources conflict, or evidence is difficult to reconcile, before recording evidence or drawing conclusions.
 ---
 
 # Engineering evidence

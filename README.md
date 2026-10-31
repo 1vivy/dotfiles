@@ -56,8 +56,8 @@ Third-party skills are git submodules pinned to a reviewed commit (currently
 uninitialized (`missing`) or off its pin (`drift`). To take an upstream update, review it, then
 `git -C agents/skills/<name> pull` and commit the new pin.
 
-`engineering-evidence` guides investigations, contract comparisons, and bounded claims about results.
-The shared agent instructions select it for those tasks.
+`engineering-evidence` helps reconcile conflicting or difficult-to-interpret evidence before
+recording it or drawing conclusions.
 It requires no report template, permanent test suite, or new CI gate.
 Repository instructions retain the project's commands, conventions, and acceptance criteria.
 

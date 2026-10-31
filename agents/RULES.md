@@ -2,4 +2,3 @@
 - Use the Bash tool and its approval boundary for device writes.
 - Inspect a target before deleting or overwriting it.
 - Preserve existing edits before diagnostics. Remove only the diagnostic changes you own.
-- Use `engineering-evidence` for investigations and claims about behavior. Read `~/.agents/skills/engineering-evidence/SKILL.md`.
