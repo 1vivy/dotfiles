@@ -14,7 +14,7 @@ Git history here is the record of how seats moved.
 | `task` | gpt-6.1-sol:medium | Bundled `task` agent's planning seat. OMO deep-low leads with 6.1 Sol at medium (#9214): GPT-6 Sol's price, DeepSWE 75.2% at high vs GPT-6 Sol's 68.8% at max. `task.agentPrewalk.task` hands execution to `omni/omp/deepseek-v4.1-flash:high` at the first eligible edit/write. → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `smol` | gpt-6.1-terra (no effort suffix) | Quick utility work, the Ctrl-cycle slot, and `@smol` targets. The scout pin sets medium. Exact-model fallbacks: omp/deepseek-v4.1-flash:low → sonnet-5-5:low. Spell out the combo ID so the DeepSeek prompt block matches. |
 | `sonic` | gpt-6-luna (no effort suffix; the bundled `sonic` agent configures medium) | OMP's bundled weak worker (`vibe_spawn` `fast`), pinned through `task.agentModelOverrides.sonic: "@sonic"`. Added 2026-10-29 after Luna carried DeepSeek's execution lanes acceptably: 27 Oct–29 Oct, 58 of 163 DeepSeek sessions fell back to Luna and ran 6,759 assistant turns there. OMO's `quick` and explore lanes also lead with Luna. → omp/deepseek-v4.1-flash (inherits effort). |
-| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model DeepSeek chain below: → DeepSeek direct → gpt-6-luna → sonnet-5-5, all inheriting `low`. |
+| `commit` | omni/omp/deepseek-v4.1-flash:low | Commit messages. Falls back through the exact-model chain below: → gpt-6-luna → sonnet-5-5, both inheriting `low`. |
 | `tiny` | omni/opencode-go/mimo-v2.6-flash | Session titles; `memory` follows it, but the backend is Hindsight. Chosen 2026-10-27 from opencode.ai/docs/go: $0.14/$0.28 per M, its own $60/mo bucket and 30,100 requests per 5 h on the $10 plan, no training, 0-day retention. A smoke title was good. Only fallback: `omni/openrouter/mistralai/mistral-nemo` ($0.029/$0.03 per M on OpenRouter's list). Left Codex (was gpt-6-luna:low). |
 | `advisor` | claude-sonnet-5-5:auto | Invoked manually by the owner. → gateway subscription Sonnet → gateway API Sonnet → gpt-6.1-sol:medium → gpt-5.6-sol:medium → omp/deepseek-v4.1-flash:high. |
 | `security` | gpt-daybreak-blue-latest:high | `security-reviewer`; Codex-only chain (Anthropic cyber refusals on RE work): → gpt-6-astra:high → gpt-6.1-sol:high → gpt-5.6-sol:high. Also usable for a manual main session after Anthropic refusals. 6.1 Sol's internal ExploitBench port is 21.5% vs 5.6 Sol's 3.5%. |
@@ -24,13 +24,14 @@ Git history here is the record of how seats moved.
 Agent pins (`task.agentModelOverrides`): `scout` → gpt-6.1-terra:medium (2026-10-27: the pin sets the effort that `smol` leaves open; 78 scouts on DeepSeek low had a median wall time of 747 s, 30 turns and 29K output tokens); `reviewer` → claude-opus-5-5 → gpt-6-astra:xhigh until
 the Claude 5x switch on Oct 8, then `@oracle`. `security-reviewer` → `@security` → `@oracle`.
 
-DeepSeek fallback (`retry.fallbackChains["omni/omp/deepseek-v4.1-flash"]`): `omni/deepseek/deepseek-flash`
-(DeepSeek direct through OmniRoute, the combo's own second step, under the Dotfiles key's 5M-token daily
-cap) → gpt-6-luna → sonnet-5-5. All bare, so they inherit the failing turn's effort. The exact-model key
-outranks role chains, so one chain covers prewalked `task` execution (high), `commit` (low) and every
-DeepSeek hop in other chains. Before 2026-10-29 the prewalk target owned no chain and borrowed `commit`'s
-(`gpt-6-luna:low`), so execution lanes skipped DeepSeek direct and dropped from high to low effort.
-`DEEPSEEK_MODELS` includes the direct id, so the fallback keeps the DeepSeek block 0.
+DeepSeek fallback (`retry.fallbackChains["omni/omp/deepseek-v4.1-flash"]`):
+gpt-6-luna → sonnet-5-5. Both selectors inherit the failing turn's effort.
+The exact-model key takes precedence over role chains. It covers prewalked `task`
+execution (high), `commit` (low), and DeepSeek selections in other chains.
+
+The OmniRoute combo owns OpenCode Go account selection and the direct DeepSeek fallback.
+OMP must not repeat the direct provider in its fallback chain. After a combo failure,
+OMP selects another model instead of the direct provider, whose quota can already be exhausted.
 
 Claude role selectors use Jev `auto`. `models.yml` limits the configured native Anthropic,
 `gateway-claude` and `gateway-claude-api` model identities to low, medium and high: explicit
